@@ -1,6 +1,7 @@
 package minechem.reference;
 
-import cpw.mods.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.ModMetadata;
+
 import java.util.Arrays;
 
 public class MetaData

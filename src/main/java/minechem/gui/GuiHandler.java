@@ -1,6 +1,5 @@
 package minechem.gui;
 
-import cpw.mods.fml.common.network.IGuiHandler;
 import minechem.item.chemistjournal.ChemistJournalContainer;
 import minechem.item.chemistjournal.ChemistJournalGui;
 import minechem.item.polytool.PolytoolContainer;
@@ -29,8 +28,13 @@ import minechem.tileentity.synthesis.SynthesisGui;
 import minechem.tileentity.synthesis.SynthesisTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class GuiHandler implements IGuiHandler
 {
 
@@ -51,7 +55,7 @@ public class GuiHandler implements IGuiHandler
         {
             return getServerGuiElementForPolytool(player, world);
         }
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
         if (tileEntity instanceof DecomposerTileEntity)
         {
             return new DecomposerContainer(player.inventory, (DecomposerTileEntity) tileEntity);
@@ -133,7 +137,7 @@ public class GuiHandler implements IGuiHandler
             return getClientGuiForPolytool(player, world);
         }
 
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
         if (tileEntity instanceof DecomposerTileEntity)
         {

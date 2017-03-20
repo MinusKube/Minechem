@@ -1,10 +1,10 @@
 package minechem.utils;
 
-import cpw.mods.fml.common.IFuelHandler;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import minechem.item.bucket.MinechemBucketItem;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.IFuelHandler;
 
 public class MinechemFuelHandler implements IFuelHandler
 {

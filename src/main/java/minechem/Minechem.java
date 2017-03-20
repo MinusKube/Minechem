@@ -1,12 +1,5 @@
 package minechem;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import minechem.computercraft.MinechemCCItemsRegistration;
 import minechem.fluid.FluidChemicalDispenser;
 import minechem.fluid.MinechemBucketReceiver;
@@ -38,10 +31,20 @@ import minechem.utils.LogHelper;
 import minechem.utils.MinechemFuelHandler;
 import minechem.utils.MinechemUtil;
 import minechem.utils.Recipe;
-import minetweaker.MineTweakerAPI;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.world.storage.loot.LootEntryItem;
+import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableList;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = Reference.ID, name = Reference.NAME, version = Reference.VERSION_FULL, useMetadata = false, guiFactory = "minechem.gui.GuiFactory", acceptedMinecraftVersions = "[1.7.10,)", dependencies = "required-after:Forge@[10.13.3.1360,)")
 public class Minechem
@@ -49,7 +52,7 @@ public class Minechem
     public static boolean isCoFHAAPILoaded;
 
     // Instancing
-    @Instance(value = Reference.ID)
+    @Mod.Instance(value = Reference.ID)
     public static Minechem INSTANCE;
 
     // Public extra data about our mod that Forge uses in the mods listing page for more information.
@@ -59,7 +62,7 @@ public class Minechem
     @SidedProxy(clientSide = "minechem.proxy.ClientProxy", serverSide = "minechem.proxy.CommonProxy")
     public static CommonProxy PROXY;
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         // Register instance.
@@ -83,7 +86,7 @@ public class Minechem
         MessageHandler.init();
 
         LogHelper.debug("Setting up ModMetaData");
-        metadata = MetaData.init(metadata);
+        MetaData.init(metadata);
 
         // Register items and blocks.
         LogHelper.debug("Registering Items...");
@@ -104,7 +107,7 @@ public class Minechem
         FMLInterModComms.sendMessage("OpenBlocks", "donateUrl", "http://jakimfett.com/patreon/");
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
         LogHelper.debug("Registering OreDict Compatability...");
@@ -165,7 +168,7 @@ public class Minechem
         }
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
         MinechemUtil.populateBlacklists();
@@ -174,9 +177,6 @@ public class Minechem
         MinechemRecipes.getInstance().RegisterRecipes();
         MinechemRecipes.getInstance().registerFluidRecipes();
         MinechemBucketHandler.getInstance().registerBucketRecipes();
-
-        LogHelper.debug("Adding blueprints to dungeon loot...");
-        MinechemItemsRegistration.addDungeonLoot();
 
         LogHelper.debug("Adding effects to molecules...");
         PharmacologyEffectRegistry.init();
@@ -194,12 +194,22 @@ public class Minechem
     }
 
     @SubscribeEvent
+    public void onLootTableLoadEvent(LootTableLoadEvent event) {
+        if(event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON)) {
+            LogHelper.debug("Adding blueprints to dungeon loot...");
+            LootTable table = event.getTable();
+            table.getPool("pool0").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 0, new LootFunction[0], new LootCondition[0], ""));
+            table.getPool("pool0").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 1, new LootFunction[0], new LootCondition[0], ""));
+        }
+    }
+
+    @SubscribeEvent
     public void onPreRender(RenderGameOverlayEvent.Pre e)
     {
         EffectsRenderer.renderEffects();
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void onLoadComplete(FMLLoadCompleteEvent event)
     {
         LogHelper.debug("Registering Mod Recipes...");

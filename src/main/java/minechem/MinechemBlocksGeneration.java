@@ -1,6 +1,5 @@
 package minechem;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import minechem.block.BlockUraniumOre;
 import minechem.radiation.RadiationFluidTileEntity;
 import minechem.tileentity.blueprintprojector.BlueprintProjectorBlock;
@@ -26,6 +25,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialTransparent;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MinechemBlocksGeneration
@@ -40,7 +40,7 @@ public class MinechemBlocksGeneration
     public static Block leadChest;
 
     public static Block uranium;
-    public static Material materialGhost = new MaterialTransparent(MapColor.airColor);
+    public static Material materialGhost = new MaterialTransparent(MapColor.AIR);
 
     public static void registerBlocks()
     {

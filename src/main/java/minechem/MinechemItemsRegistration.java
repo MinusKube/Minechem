@@ -1,6 +1,5 @@
 package minechem;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import minechem.fluid.FluidHelper;
 import minechem.item.ItemAtomicManipulator;
 import minechem.item.OpticalMicroscopeLens;
@@ -15,12 +14,14 @@ import minechem.reference.Reference;
 import minechem.utils.MinechemFuelHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.WeightedRandomChestContent;
-import net.minecraftforge.common.ChestGenHooks;
+import net.minecraft.world.storage.loot.*;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.io.File;
 
 public class MinechemItemsRegistration
 {
@@ -107,15 +108,6 @@ public class MinechemItemsRegistration
         OreDictionary.registerOre("dustSaltpeter", new ItemStack(MinechemItemsRegistration.molecule, 1, MoleculeEnum.potassiumNitrate.id()));
         OreDictionary.registerOre("dustSalt", new ItemStack(MinechemItemsRegistration.molecule, 1, MoleculeEnum.salt.id()));
         OreDictionary.registerOre("quicksilver", new ItemStack(MinechemItemsRegistration.element, 1, ElementEnum.Hg.atomicNumber()));
-    }
-
-    public static void addDungeonLoot()
-    {
-        ChestGenHooks ChestProvider = ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST);
-        ItemStack A = new ItemStack(blueprint, 1, 0);
-        ItemStack B = new ItemStack(blueprint, 1, 1);
-        ChestProvider.addItem(new WeightedRandomChestContent(A, 10, 80, 1));
-        ChestProvider.addItem(new WeightedRandomChestContent(B, 10, 80, 1));
     }
 
     public static void registerFuelValues()
