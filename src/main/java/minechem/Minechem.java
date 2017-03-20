@@ -31,6 +31,7 @@ import minechem.utils.LogHelper;
 import minechem.utils.MinechemFuelHandler;
 import minechem.utils.MinechemUtil;
 import minechem.utils.Recipe;
+import modtweaker.TweakerPlugin;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
@@ -137,9 +138,6 @@ public class Minechem
         LogHelper.debug("Registering Fluid Containers...");
         MinechemItemsRegistration.registerFluidContainers();
 
-        LogHelper.debug("Registering GUI and Container handlers...");
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-
         LogHelper.debug("Register Tick Events for chemical effects tracking...");
         PROXY.registerTickHandlers();
 
@@ -153,18 +151,14 @@ public class Minechem
         LogHelper.debug("Registering Fuel Values...");
         MinechemItemsRegistration.registerFuelValues();
 
-        if (Loader.isModLoaded("MineTweaker3"))
+        if (Loader.isModLoaded("ModTweaker2"))
         {
-            LogHelper.debug("Loading MineTweaker Classes...");
-            MineTweakerAPI.registerClass(Chemicals.class);
-            MineTweakerAPI.registerClass(Decomposer.class);
-            MineTweakerAPI.registerClass(Synthesiser.class);
-            MineTweakerAPI.registerClass(Fuels.class);
-        }
-
-        if (Loader.isModLoaded("ComputerCraft"))
-        {
-            MinechemCCItemsRegistration.init();
+            LogHelper.debug("Loading ModTweaker Classes...");
+            TweakerPlugin.load(Reference.ID, this.getClass());
+            TweakerPlugin.register(Reference.ID, Chemicals.class);
+            TweakerPlugin.register(Reference.ID, Decomposer.class);
+            TweakerPlugin.register(Reference.ID, Synthesiser.class);
+            TweakerPlugin.register(Reference.ID, Fuels.class);
         }
     }
 

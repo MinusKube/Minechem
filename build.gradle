@@ -8,7 +8,6 @@ buildscript {
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
-        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
@@ -33,9 +32,17 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven {
+        name 'CB Repo'
+        url "http://chickenbones.net/maven"
+    }
 }
 
 dependencies {
+    compile group: 'codechicken', name: 'NotEnoughItems', version: "${mcVersion}-${neiVersion}", ext: 'jar', classifier: "universal"
+    compile group: 'codechicken', name: 'CodeChickenCore', version: "${mcVersion}-${cccoreVersion}", ext: 'jar', classifier: "universal"
+    compile group: 'codechicken', name: 'CodeChickenLib', version: "${mcVersion}-${cclibVersion}", ext: 'jar', classifier: "universal"
+    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 processResources {

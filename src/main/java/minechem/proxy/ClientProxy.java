@@ -1,10 +1,12 @@
 package minechem.proxy;
 
+import minechem.Minechem;
 import minechem.MinechemBlocksGeneration;
 import minechem.MinechemItemsRegistration;
 import minechem.fluid.FluidTextureStitchHandler;
 import minechem.fluid.MinechemFluid;
 import minechem.fluid.MinechemFluidBlock;
+import minechem.gui.GuiHandler;
 import minechem.item.bucket.MinechemBucketItem;
 import minechem.item.bucket.MinechemBucketRenderer;
 import minechem.item.element.ElementItemRenderer;
@@ -26,6 +28,7 @@ import minechem.tileentity.microscope.MicroscopeTileEntityRenderer;
 import minechem.tileentity.synthesis.SynthesisItemRenderer;
 import minechem.tileentity.synthesis.SynthesisTileEntity;
 import minechem.tileentity.synthesis.SynthesisTileEntityRenderer;
+import minechem.utils.LogHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,9 +37,12 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
     public FluidItemRenderingHandler fluidItemRenderingHandler;
@@ -45,7 +51,9 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerRenderers()
     {
-        RENDER_ID = RenderingRegistry.getNextAvailableRenderId();
+
+        LogHelper.debug("Registering GUI and Container handlers...");
+        NetworkRegistry.INSTANCE.registerGuiHandler(Minechem.INSTANCE, new GuiHandler());
 
         MinecraftForgeClient.registerItemRenderer(MinechemItemsRegistration.element, new ElementItemRenderer());
         MinecraftForgeClient.registerItemRenderer(MinechemItemsRegistration.molecule, new MoleculeItemRenderer());
