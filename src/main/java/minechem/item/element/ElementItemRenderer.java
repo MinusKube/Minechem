@@ -63,10 +63,10 @@ public class ElementItemRenderer implements IItemRenderer
         float duration = 1500;
         float t = (int) (Minecraft.getSystemTime() % duration);
         int frame = (int) MinechemUtil.translateValue(t, 0, duration, 0, 7);
-        if (element.roomState() == ChemicalRoomStateEnum.gas)
+        if (element.roomState() == ChemicalRoomStateEnum.GAS)
         {
             contentsTex = item.gas[frame];
-        } else if (element.roomState() == ChemicalRoomStateEnum.liquid)
+        } else if (element.roomState() == ChemicalRoomStateEnum.LIQUID)
         {
             contentsTex = item.liquid[frame];
         } else

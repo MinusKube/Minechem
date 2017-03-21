@@ -43,7 +43,7 @@ public class CreativeTabMinechem extends CreativeTabs
             case 2:
                 return new ItemStack(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.elementsBlocks.get(FluidHelper.elements.get(ElementEnum.U))), 1);
             default:
-                return new ItemStack(Items.fermented_spider_eye);
+                return new ItemStack(Items.FERMENTED_SPIDER_EYE);
         }
     }
 }

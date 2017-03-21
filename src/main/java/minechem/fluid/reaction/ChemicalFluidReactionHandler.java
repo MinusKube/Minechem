@@ -1,12 +1,6 @@
 package minechem.fluid.reaction;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
 import minechem.Settings;
 import minechem.fluid.FluidHelper;
 import minechem.fluid.MinechemFluidBlock;
@@ -23,8 +17,17 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ChemicalFluidReactionHandler
 {
@@ -64,12 +67,12 @@ public class ChemicalFluidReactionHandler
             chemicalA = MinechemUtil.getChemical(((MinechemBucketItem) item).fluid);
         }
 
-        if (chemicalA != null && (world.isMaterialInBB(entityItem.boundingBox, Material.water) || world.isMaterialInBB(entityItem.boundingBox, MinechemFluidBlock.materialFluidBlock)))
+        if (chemicalA != null && (world.isMaterialInBB(entityItem.getEntityBoundingBox(), Material.WATER) || world.isMaterialInBB(entityItem.getEntityBoundingBox(), MinechemFluidBlock.materialFluidBlock)))
         {
-            int x = MathHelper.floor_double(entityItem.posX);
-            int y = MathHelper.floor_double(entityItem.posY);
-            int z = MathHelper.floor_double(entityItem.posZ);
-            Block block = world.getBlock(x, y, z);
+            int x = MathHelper.floor(entityItem.posX);
+            int y = MathHelper.floor(entityItem.posY);
+            int z = MathHelper.floor(entityItem.posZ);
+            Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
             MinechemChemicalType chemicalB = MinechemUtil.getChemical(block);
 
             if (chemicalB != null)
@@ -84,7 +87,7 @@ public class ChemicalFluidReactionHandler
                     {
                         world.removeEntity(entityItem);
                     }
-                    MinechemUtil.throwItemStack(world, new ItemStack(Items.bucket), x, y, z);
+                    MinechemUtil.throwItemStack(world, new ItemStack(Items.BUCKET), x, y, z);
                 }
             }
 
@@ -245,8 +248,8 @@ public class ChemicalFluidReactionHandler
                 int py = coords.getY();
                 int pz = coords.getZ();
 
-                world.func_147480_a(px, py, pz, true);
-                world.setBlockToAir(px, py, pz);
+                world.destroyBlock(new BlockPos(px, py, pz), true);
+                world.setBlockToAir(new BlockPos(px, py, pz));
 
                 Block fluidBlock = null;
                 if (chemical instanceof ElementEnum)
@@ -259,7 +262,7 @@ public class ChemicalFluidReactionHandler
 
                 if (fluidBlock != null)
                 {
-                    world.setBlock(px, py, pz, fluidBlock, popFlowingFluid ? 1 : 0, 3);
+                    world.setBlockState(new BlockPos(px, py, pz), fluidBlock.getStateFromMeta(popFlowingFluid ? 1 : 0), 3);
                 }
             }
         }
@@ -276,8 +279,8 @@ public class ChemicalFluidReactionHandler
             if (reactionRules.containsKey(rule))
             {
                 boolean flag = !(MinechemUtil.canDrain(world, source, sourceX, sourceY, sourceZ) && MinechemUtil.canDrain(world, destination, destinationX, destinationY, destinationZ));
-                world.setBlockToAir(sourceX, sourceY, sourceZ);
-                world.setBlockToAir(destinationX, destinationY, destinationZ);
+                world.setBlockToAir(new BlockPos(sourceX, sourceY, sourceZ));
+                world.setBlockToAir(new BlockPos(destinationX, destinationY, destinationZ));
                 chemicalReaction(world, null, destinationX, destinationY, destinationZ, rule, flag);
                 return true;
             }
@@ -296,7 +299,7 @@ public class ChemicalFluidReactionHandler
                 int x = centerX + xOffset;
                 int z = centerZ + zOffset;
 
-                if (world.isAirBlock(x, centerY, z) || !world.getBlock(x, centerY, z).getMaterial().isSolid())
+                if (world.isAirBlock(new BlockPos(x, centerY, z)) || !world.getBlockState(new BlockPos(x, centerY, z)).getMaterial().isSolid())
                 {
                     spaces.add(new CoordTuple(x, centerY, z));
                 }

@@ -1,12 +1,12 @@
 package minechem.fluid;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import minechem.Minechem;
 import minechem.item.bucket.MinechemBucketHandler;
 import minechem.item.element.ElementEnum;
 import minechem.item.molecule.MoleculeEnum;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class FluidHelper
 {

@@ -3,6 +3,7 @@ package minechem.fluid;
 import minechem.item.ChemicalRoomStateEnum;
 import minechem.item.MinechemChemicalType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -13,10 +14,10 @@ abstract public class MinechemFluid extends Fluid
 
     public MinechemFluid(String fluidName, ChemicalRoomStateEnum roomstatus)
     {
-        super(fluidName);
+        super(fluidName, new ResourceLocation(fluidName + "_still"), new ResourceLocation(fluidName + "_flow"));
         setGaseous(roomstatus.isGas());
         setViscosity(roomstatus.getViscosity());
-        setDensity(roomstatus.isGas() ? -10 : roomstatus == ChemicalRoomStateEnum.solid ? 0 : 10);
+        setDensity(roomstatus.isGas() ? -10 : roomstatus == ChemicalRoomStateEnum.SOLID ? 0 : 10);
         setQuanta(roomstatus.getQuanta());
         FluidRegistry.registerFluid(this);
     }

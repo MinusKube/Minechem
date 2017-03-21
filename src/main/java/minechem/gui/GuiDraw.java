@@ -47,7 +47,7 @@ public class GuiDraw
     }
 
     public static final GuiHook gui = new GuiHook();
-    public static FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+    public static FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
     public static TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
 
     public static void drawRect(int x, int y, int w, int h, int colour)
@@ -137,7 +137,7 @@ public class GuiDraw
     public static Dimension displaySize()
     {
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution res = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution res = new ScaledResolution(mc);
         return new Dimension(res.getScaledWidth(), res.getScaledHeight());
     }
 

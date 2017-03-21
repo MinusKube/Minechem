@@ -75,9 +75,9 @@ public class ExplosiveFluidHandler
 
     private void init()
     {
-        addFireSource(Blocks.fire);
-        addFireSource(Blocks.lava);
-        addFireSource(Blocks.flowing_lava);
+        addFireSource(Blocks.FIRE);
+        addFireSource(Blocks.LAVA);
+        addFireSource(Blocks.FLOWING_LAVA);
 
         addExplosiveFluid(MoleculeEnum.tnt, 2f);
     }

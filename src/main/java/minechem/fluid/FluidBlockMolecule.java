@@ -1,26 +1,18 @@
 package minechem.fluid;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.Settings;
 import minechem.potion.PharmacologyEffectRegistry;
-import minechem.reference.Textures;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class FluidBlockMolecule extends MinechemFluidBlock
 {
-    @SideOnly(Side.CLIENT)
-    protected IIcon stillIcon;
-    @SideOnly(Side.CLIENT)
-    protected IIcon flowingIcon;
 
     public FluidBlockMolecule(MinechemFluid fluid, Material material)
     {
@@ -30,43 +22,12 @@ public class FluidBlockMolecule extends MinechemFluidBlock
     public FluidBlockMolecule(MinechemFluid fluid)
     {
         super(fluid, materialFluidBlock);
-        this.setBlockName(fluidName);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister ir)
-    {
-        stillIcon = ir.registerIcon(Textures.IIcon.FUILD_STILL);
-        flowingIcon = ir.registerIcon(Textures.IIcon.FLUID_FLOW);
+        this.setRegistryName(fluidName);
+        this.setUnlocalizedName(fluidName);
     }
 
     @Override
-    public IIcon getIcon(int side, int meta)
-    {
-        return (side > 1) ? flowingIcon : stillIcon;
-    }
-
-    @Override
-    public int colorMultiplier(IBlockAccess block, int x, int y, int z)
-    {
-        return getFluid().getColor();
-    }
-
-    @Override
-    public int getRenderColor(int i)
-    {
-        return getFluid().getColor();
-    }
-
-    @Override
-    public int getBlockColor()
-    {
-        return getFluid().getColor();
-    }
-
-    @Override
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity)
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity)
     {
         if (entity instanceof EntityLivingBase && Settings.fluidEffects && getFluid() instanceof FluidMolecule)
         {
@@ -75,7 +36,7 @@ public class FluidBlockMolecule extends MinechemFluidBlock
             int power = ((FluidMolecule) getFluid()).molecule.radioactivity().ordinal();
             if (power > 0)
             {
-                ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.poison.getId(), 10, power - 1));
+                ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.POISON, 10, power - 1));
             }
         }
     }

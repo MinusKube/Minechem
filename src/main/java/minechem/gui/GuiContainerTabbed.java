@@ -1,25 +1,25 @@
 package minechem.gui;
 
-import codechicken.nei.VisiblityData;
+import codechicken.nei.VisibilityData;
 import codechicken.nei.api.INEIGuiHandler;
 import codechicken.nei.api.TaggedInventoryArea;
-import cpw.mods.fml.common.Optional;
-import java.util.ArrayList;
-import java.util.List;
 import minechem.utils.MinechemUtil;
 import minechem.utils.Rect;
 import minechem.utils.SessionVars;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Optional;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Optional.Interface(iface = "codechicken.nei.api.INEIGuiHandler", modid = "NotEnoughItems")
 public abstract class GuiContainerTabbed extends GuiMinechemContainer implements INEIGuiHandler, GuiYesNoCallback
@@ -62,12 +62,12 @@ public abstract class GuiContainerTabbed extends GuiMinechemContainer implements
         int h = 16;
         this.mc.getTextureManager().bindTexture(resource);
         GL11.glColor4f(1F, 1F, 1F, 1F);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
+        Tessellator tessellator = Tessellator.getInstance();
+        /*tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(x + 0, y + h, this._zLevel, 0D, 1D);
         tessellator.addVertexWithUV(x + w, y + h, this._zLevel, 1D, 1D);
         tessellator.addVertexWithUV(x + w, y + 0, this._zLevel, 1D, 0D);
-        tessellator.addVertexWithUV(x + 0, y + 0, this._zLevel, 0D, 0D);
+        tessellator.addVertexWithUV(x + 0, y + 0, this._zLevel, 0D, 0D);*/
         tessellator.draw();
     }
 
@@ -255,14 +255,13 @@ public abstract class GuiContainerTabbed extends GuiMinechemContainer implements
 
     protected int getCenteredOffset(String string, int xWidth)
     {
-        FontRenderer fontRenderer = RenderManager.instance.getFontRenderer();
+        //FontRenderer fontRenderer = RenderManager.instance.getFontRenderer();
 
-        return (xWidth - fontRenderer.getStringWidth(string)) / 2;
+        return (xWidth - fontRendererObj.getStringWidth(string)) / 2;
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseButton)
-    {
+    protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
         super.mouseClicked(x, y, mouseButton);
 
         GuiTab guiTab = getTabAtPosition(mouseX, mouseY);
@@ -329,8 +328,7 @@ public abstract class GuiContainerTabbed extends GuiMinechemContainer implements
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
@@ -444,7 +442,7 @@ public abstract class GuiContainerTabbed extends GuiMinechemContainer implements
     /* INEIGuiHandler */
     @Optional.Method(modid = "NotEnoughItems")
     @Override
-    public VisiblityData modifyVisiblity(GuiContainer gui, VisiblityData currentVisibility)
+    public VisibilityData modifyVisiblity(GuiContainer gui, VisibilityData currentVisibility)
     {
         return currentVisibility;
     }

@@ -1,4 +1,4 @@
-@API(owner = "minechem", provides = "minechemAPI", apiVersion = "1.7.10R1")
+@API(owner = "minechem", provides = "minechemAPI", apiVersion = "1.10.2R1")
 package minechem.api;
 
-import cpw.mods.fml.common.API;
+import net.minecraftforge.fml.common.API;

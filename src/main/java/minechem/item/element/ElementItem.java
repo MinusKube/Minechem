@@ -69,9 +69,9 @@ public class ElementItem extends Item
         classificationIndexes.put(ElementClassificationEnum.transitionMetal, 7);
         classificationIndexes.put(ElementClassificationEnum.lanthanide, 8);
         classificationIndexes.put(ElementClassificationEnum.actinide, 9);
-        classificationIndexes.put(ChemicalRoomStateEnum.gas, 1);
-        classificationIndexes.put(ChemicalRoomStateEnum.solid, 17);
-        classificationIndexes.put(ChemicalRoomStateEnum.liquid, 33);
+        classificationIndexes.put(ChemicalRoomStateEnum.GAS, 1);
+        classificationIndexes.put(ChemicalRoomStateEnum.SOLID, 17);
+        classificationIndexes.put(ChemicalRoomStateEnum.LIQUID, 33);
     }
 
     public static String getShortName(ItemStack itemstack)

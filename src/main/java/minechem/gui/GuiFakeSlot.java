@@ -1,13 +1,14 @@
 package minechem.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 
 public class GuiFakeSlot extends Gui
@@ -22,7 +23,7 @@ public class GuiFakeSlot extends Gui
     private int width = 16;
     private int height = 16;
     private ItemStack itemstack;
-    private static RenderItem renderItem = new RenderItem();
+    private RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
 
     public GuiFakeSlot(GuiContainerTabbed parentContainer, EntityPlayer player)
     {
@@ -127,8 +128,8 @@ public class GuiFakeSlot extends Gui
         RenderHelper.enableGUIStandardItemLighting();
         this.zLevel = 100.0F;
         renderItem.zLevel = 100.0F;
-        renderItem.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.renderEngine, itemstack, 0, 0);
-        renderItem.renderItemOverlayIntoGUI(mc.fontRenderer, mc.renderEngine, itemstack, 0, 0);
+        renderItem.renderItemAndEffectIntoGUI(itemstack, 0, 0);
+        renderItem.renderItemOverlayIntoGUI(mc.fontRendererObj, itemstack, 0, 0, null);
         this.zLevel = 0.0F;
         renderItem.zLevel = 0.0F;
     }
@@ -145,7 +146,7 @@ public class GuiFakeSlot extends Gui
         int maxLineWidth = 0;
         for (String line : lines)
         {
-            int lineWidth = mc.fontRenderer.getStringWidth(line);
+            int lineWidth = mc.fontRendererObj.getStringWidth(line);
             if (lineWidth > maxLineWidth)
             {
                 maxLineWidth = lineWidth;
@@ -171,7 +172,7 @@ public class GuiFakeSlot extends Gui
             {
                 tooltip = itemstack.getRarity().rarityColor + tooltip;
             }
-            mc.fontRenderer.drawStringWithShadow(tooltip, tx, ty, 0xFFFFFFFF);
+            mc.fontRendererObj.drawStringWithShadow(tooltip, tx, ty, 0xFFFFFFFF);
         }
     }
 

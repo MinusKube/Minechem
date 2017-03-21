@@ -1,6 +1,5 @@
 package minechem.fluid;
 
-import java.util.Set;
 import minechem.MinechemItemsRegistration;
 import minechem.item.MinechemChemicalType;
 import minechem.item.element.ElementEnum;
@@ -14,11 +13,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.dispenser.IPosition;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Set;
 
 public class FluidChemicalDispenser implements IBehaviorDispenseItem
 {
@@ -26,26 +28,24 @@ public class FluidChemicalDispenser implements IBehaviorDispenseItem
     public static void init()
     {
         FluidChemicalDispenser dispenser = new FluidChemicalDispenser();
-        BlockDispenser.dispenseBehaviorRegistry.putObject(MinechemItemsRegistration.element, dispenser);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(MinechemItemsRegistration.molecule, dispenser);
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(MinechemItemsRegistration.element, dispenser);
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(MinechemItemsRegistration.molecule, dispenser);
     }
 
     @Override
     public ItemStack dispense(IBlockSource blockSource, ItemStack itemStack)
     {
-        EnumFacing enumfacing = BlockDispenser.func_149937_b(blockSource.getBlockMetadata());
+        IPosition position = BlockDispenser.getDispensePosition(blockSource);
         World world = blockSource.getWorld();
-        int x = blockSource.getXInt() + enumfacing.getFrontOffsetX();
-        int y = blockSource.getYInt() + enumfacing.getFrontOffsetY();
-        int z = blockSource.getZInt() + enumfacing.getFrontOffsetZ();
+        BlockPos pos = new BlockPos(position.getX(), position.getY(), position.getZ());
         TileEntity inventoryTile = blockSource.getBlockTileEntity();
 
         if (itemStack.getItem() instanceof ElementItem && itemStack.getItemDamage() != 0)
         {
-            Block frontBlock = world.getBlock(x, y, z);
+            Block frontBlock = world.getBlockState(pos).getBlock();
             MinechemChemicalType chemical = MinechemUtil.getChemical(frontBlock);
 
-            if (chemical != null && MinechemUtil.canDrain(world, frontBlock, x, y, z))
+            if (chemical != null && MinechemUtil.canDrain(world, frontBlock, pos.getX(), pos.getY(), pos.getZ()))
             {
                 ItemStack stack = MinechemUtil.createItemStack(chemical, 8);
 
@@ -98,18 +98,18 @@ public class FluidChemicalDispenser implements IBehaviorDispenseItem
                         }
                     }
 
-                    TileEntity tile = world.getTileEntity(x, y, z);
+                    TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof RadiationFluidTileEntity && ((RadiationFluidTileEntity) tile).info != null)
                     {
                         RadiationInfo.setRadiationInfo(((RadiationFluidTileEntity) tile).info, stack);
                     }
-                    world.setBlockToAir(x, y, z);
+                    world.setBlockToAir(pos);
 
                     if (inventoryTile instanceof IInventory)
                     {
                         stack = MinechemUtil.addItemToInventory((IInventory) inventoryTile, stack);
                     }
-                    MinechemUtil.throwItemStack(world, stack, x, y, z);
+                    MinechemUtil.throwItemStack(world, stack, pos.getX(), pos.getY(), pos.getZ());
                 }
             }
         } else
@@ -136,13 +136,13 @@ public class FluidChemicalDispenser implements IBehaviorDispenseItem
                 return itemStack;
             }
 
-            if (!world.isAirBlock(x, y, z) && !world.getBlock(x, y, z).getMaterial().isSolid())
+            if (!world.isAirBlock(pos) && !world.getBlockState(pos).getMaterial().isSolid())
             {
-                world.func_147480_a(x, y, z, true);
-                world.setBlockToAir(x, y, z);
+                world.destroyBlock(pos, true);
+                world.setBlockToAir(pos);
             }
 
-            if (world.isAirBlock(x, y, z))
+            if (world.isAirBlock(pos))
             {
                 RadiationInfo radioactivity = ElementItem.getRadiationInfo(itemStack, world);
                 long worldtime = world.getTotalWorldTime();
@@ -199,10 +199,10 @@ public class FluidChemicalDispenser implements IBehaviorDispenseItem
                     }
                 }
                 ItemStack empties = MinechemUtil.addItemToInventory(inventory, new ItemStack(MinechemItemsRegistration.element, 8, 0));
-                MinechemUtil.throwItemStack(world, empties, x, y, z);
+                MinechemUtil.throwItemStack(world, empties, pos.getX(), pos.getY(), pos.getZ());
 
-                world.setBlock(x, y, z, block, 0, 3);
-                TileEntity tile = world.getTileEntity(x, y, z);
+                world.setBlockState(pos, block.getStateFromMeta(0), 3);
+                TileEntity tile = world.getTileEntity(pos);
                 if (radioactivity.isRadioactive() && tile instanceof RadiationFluidTileEntity)
                 {
                     ((RadiationFluidTileEntity) tile).info = radioactivity;

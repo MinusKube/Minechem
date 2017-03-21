@@ -1,9 +1,7 @@
 package minechem.fluid;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import minechem.reference.Textures;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class FluidTextureStitchHandler
 {
@@ -11,7 +9,7 @@ public class FluidTextureStitchHandler
     @SubscribeEvent
     public void onStitch(TextureStitchEvent.Pre event)
     {
-        if (event.map.getTextureType() == 0)
+        /*if (event.map.getTextureType() == 0)
         {
             IIconRegister ir = event.map;
             for (FluidElement fluidElement : FluidHelper.elements.values())
@@ -22,6 +20,6 @@ public class FluidTextureStitchHandler
             {
                 fluidMolecule.setIcons(ir.registerIcon(Textures.IIcon.FUILD_STILL), ir.registerIcon(Textures.IIcon.FLUID_FLOW));
             }
-        }
+        }*/
     }
 }

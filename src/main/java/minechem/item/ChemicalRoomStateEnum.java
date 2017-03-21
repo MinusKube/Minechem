@@ -1,10 +1,10 @@
 package minechem.item;
 
-import net.minecraft.util.StatCollector;
+import net.minecraft.client.resources.I18n;
 
 public enum ChemicalRoomStateEnum implements IDescriptiveName
 {
-    liquid("Liquid", false, 1000, 8), solid("Solid", false, 1200, 1), gas("Gaseous", true, 400, 8);
+    LIQUID("Liquid", false, 1000, 8), SOLID("Solid", false, 1200, 1), GAS("Gaseous", true, 400, 8);
 
     private final boolean isGas;
     private final int viscosity;
@@ -42,7 +42,7 @@ public enum ChemicalRoomStateEnum implements IDescriptiveName
     @Override
     public String descriptiveName()
     {
-        String localizedName = StatCollector.translateToLocal("element.classification." + descriptiveName);
+        String localizedName = I18n.format("element.classification." + descriptiveName);
         if (!localizedName.isEmpty() || !localizedName.equals("element.classification." + descriptiveName))
         {
             return localizedName;

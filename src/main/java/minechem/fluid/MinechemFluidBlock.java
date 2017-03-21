@@ -1,6 +1,5 @@
 package minechem.fluid;
 
-import java.util.Random;
 import minechem.Settings;
 import minechem.fluid.reaction.ChemicalFluidReactionHandler;
 import minechem.item.ChemicalRoomStateEnum;
@@ -13,16 +12,20 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 
+import java.util.Random;
+
 public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntityProvider
 {
     private final boolean isRadioactivity;
-    public static final Material materialFluidBlock = new MaterialLiquid(MapColor.waterColor);
+    public static final Material materialFluidBlock = new MaterialLiquid(MapColor.WATER);
     private final boolean solid;
 
     public MinechemFluidBlock(MinechemFluid fluid, Material material)
@@ -42,7 +45,7 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
         }
 
         isBlockContainer = true;
-        solid = fluid.getChemical().roomState() == ChemicalRoomStateEnum.solid;
+        solid = fluid.getChemical().roomState() == ChemicalRoomStateEnum.SOLID;
     }
 
     @Override
@@ -53,10 +56,10 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock)
-    {
-        super.onNeighborBlockChange(world, x, y, z, neighborBlock);
-        checkStatus(world, x, y, z);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock) {
+        super.neighborChanged(state, world, pos, neighborBlock);
+
+        checkStatus(world, pos.getX(), pos.getY(), pos.getZ());
     }
 
     public void checkStatus(World world, int x, int y, int z)
@@ -82,7 +85,7 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
 
     private boolean checkToReact(World world, int dx, int dy, int dz, int sx, int sy, int sz)
     {
-        return ChemicalFluidReactionHandler.checkToReact(this, world.getBlock(dx, dy, dz), world, dx, dy, dz, sx, sy, sz);
+        return ChemicalFluidReactionHandler.checkToReact(this, world.getBlockState(new BlockPos(dx, dy, dz)).getBlock(), world, dx, dy, dz, sx, sy, sz);
     }
 
     private void checkToExplode(World world, int x, int y, int z)
@@ -97,7 +100,7 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
         boolean flag = false;
         for (EnumFacing face : EnumFacing.values())
         {
-            if (ExplosiveFluidHandler.getInstance().existingFireSource(world.getBlock(x + face.getFrontOffsetX(), y + face.getFrontOffsetY(), z + face.getFrontOffsetZ())))
+            if (ExplosiveFluidHandler.getInstance().existingFireSource(world.getBlockState(new BlockPos(x + face.getFrontOffsetX(), y + face.getFrontOffsetY(), z + face.getFrontOffsetZ())).getBlock()))
             {
                 flag = true;
                 break;
@@ -108,33 +111,32 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
             return;
         }
 
-        world.func_147480_a(x, y, z, true);
-        world.setBlockToAir(x, y, z);
+        world.destroyBlock(new BlockPos(x, y, z), true);
+        world.setBlockToAir(new BlockPos(x, y, z));
         world.createExplosion(null, x, y, z, ExplosiveFluidHandler.getInstance().getExplosiveFluid(type), true);
     }
 
     @Override
-    public boolean hasTileEntity(int metadata)
-    {
-        return isRadioactivity && metadata == 0;
+    public boolean hasTileEntity(IBlockState state) {
+        return isRadioactivity && state.getBlock().getMetaFromState(state) == 0;
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int metadata)
-    {
-        return hasTileEntity(metadata) ? new RadiationFluidTileEntity() : null;
+    public TileEntity createNewTileEntity(World world, int i) {
+        return hasTileEntity(getStateFromMeta(i)) ? new RadiationFluidTileEntity() : null;
     }
 
     @Override
-    public boolean onBlockEventReceived(World world, int x, int y, int z, int eventID, int eventParameter)
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int eventID, int eventParameter)
     {
-        super.onBlockEventReceived(world, x, y, z, eventID, eventParameter);
-        TileEntity tileentity = world.getTileEntity(x, y, z);
+        super.eventReceived(state, world, pos, eventID, eventParameter);
+
+        TileEntity tileentity = world.getTileEntity(pos);
         return tileentity != null ? tileentity.receiveClientEvent(eventID, eventParameter) : false;
     }
 
     @Override
-    public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion)
+    public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosion)
     {
         if (world.isRemote)
         {
@@ -142,25 +144,24 @@ public class MinechemFluidBlock extends BlockFluidClassic implements ITileEntity
         }
 
         MinechemChemicalType type = MinechemUtil.getChemical(this);
-        world.func_147480_a(x, y, z, true);
-        world.setBlockToAir(x, y, z);
-        world.createExplosion(null, x, y, z, ExplosiveFluidHandler.getInstance().getExplosiveFluid(type), true);
+        world.destroyBlock(pos, true);
+        world.setBlockToAir(pos);
+        world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), ExplosiveFluidHandler.getInstance().getExplosiveFluid(type), true);
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random rand)
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
         if (!solid)
         {
-            super.updateTick(world, x, y, z, rand);
+            super.updateTick(world, pos, state, rand);
         }
-        checkStatus(world, x, y, z);
+        checkStatus(world, pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
-    public void onBlockAdded(World world, int x, int y, int z)
-    {
-        super.onBlockAdded(world, x, y, z);
-        checkStatus(world, x, y, z);
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(world, pos, state);
+        checkStatus(world, pos.getX(), pos.getY(), pos.getZ());
     }
 }
