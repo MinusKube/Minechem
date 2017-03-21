@@ -1,6 +1,5 @@
 package minechem.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import minechem.reference.Resources;
 import minechem.utils.LogHelper;
 import minechem.utils.SessionVars;
@@ -10,11 +9,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 
 public abstract class GuiTab
 {
-    public FontRenderer tabFontRenderer = FMLClientHandler.instance().getClient().fontRenderer;
+    public FontRenderer tabFontRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
     public SoundHandler tabSoundManager = FMLClientHandler.instance().getClient().getSoundHandler();
 
     private boolean open;
@@ -40,7 +40,7 @@ public abstract class GuiTab
     public GuiTab(Gui gui)
     {
         myGui = gui;
-        fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         renderEngine = Minecraft.getMinecraft().renderEngine;
     }
 

@@ -1,8 +1,5 @@
 package minechem.potion;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import minechem.utils.LogHelper;
 import net.minecraft.potion.Potion;
 
 public class PotionInjector
@@ -11,6 +8,10 @@ public class PotionInjector
 
     public static void inject()
     {
+        /*
+
+        TODO: Is this still useful?
+
         int potionTotal = Potion.potionTypes.length;
         Potion[] effectAray = new Potion[potionTotal + 1];
         System.arraycopy(Potion.potionTypes, 0, effectAray, 0, potionTotal);
@@ -39,7 +40,8 @@ public class PotionInjector
         {
             LogHelper.debug("PotionInjector threw an exception:");
             LogHelper.debug(e);
-        }
-        atropineHigh = new PotionProvider(potionTotal, true, 0x00FF6E).setPotionName("Delirium")/*.setIconIndex(2, 1)*/;
+        }*/
+
+        atropineHigh = new PotionProvider(true, 0x00FF6E).setPotionName("Delirium")/*.setIconIndex(2, 1)*/;
     }
 }

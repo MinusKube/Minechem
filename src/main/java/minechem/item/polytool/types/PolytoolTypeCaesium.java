@@ -13,9 +13,9 @@ public class PolytoolTypeCaesium extends PolytoolUpgradeType
     @Override
     public void onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase target)
     {
-        if (block == Blocks.stone)
+        if (block == Blocks.STONE)
         {
-            target.worldObj.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
+            target.world.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
         }
     }
 

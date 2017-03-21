@@ -12,7 +12,7 @@ public class PolytoolTypeHelium extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        itemStack.stackTagCompound.setInteger("HeliumHitEntity", target.getEntityId());
+        itemStack.getTagCompound().setInteger("HeliumHitEntity", target.getEntityId());
     }
 
     @Override
@@ -24,7 +24,7 @@ public class PolytoolTypeHelium extends PolytoolUpgradeType
     @Override
     public void onTickFull(ItemStack itemStack, World world, Entity par3Entity, int par4, boolean par5)
     {
-        int targetId = itemStack.stackTagCompound.getInteger("HeliumHitEntity");
+        int targetId = itemStack.getTagCompound().getInteger("HeliumHitEntity");
         if (targetId != 0)
         {
             Entity target = world.getEntityByID(targetId);
@@ -34,7 +34,7 @@ public class PolytoolTypeHelium extends PolytoolUpgradeType
                 target.motionY = Math.min(target.motionY + .1, 1);
                 if (rand.nextInt((int)(10 * power)) == 0)
                 {
-                    itemStack.stackTagCompound.setInteger("HeliumHitEntity", 0);
+                    itemStack.getTagCompound().setInteger("HeliumHitEntity", 0);
                 }
             }
         }

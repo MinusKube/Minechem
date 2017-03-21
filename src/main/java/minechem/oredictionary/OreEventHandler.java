@@ -1,7 +1,7 @@
 package minechem.oredictionary;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import minechem.MinechemRecipes;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreEventHandler
@@ -10,7 +10,7 @@ public class OreEventHandler
     @SubscribeEvent
     public void onOreEvent(OreDictionary.OreRegisterEvent event)
     {
-        String oreName = event.Name;
+        String oreName = event.getName();
         for (OreDictionaryHandler handler : MinechemRecipes.getOreDictionaryHandlers())
         {
             if (handler.canHandle(oreName))

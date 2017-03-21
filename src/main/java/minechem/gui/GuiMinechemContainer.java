@@ -1,11 +1,11 @@
 package minechem.gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.inventory.Container;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class GuiMinechemContainer extends GuiContainer
@@ -16,7 +16,7 @@ public abstract class GuiMinechemContainer extends GuiContainer
     {
         super(container);
         this.inventorySlots = container;
-        this.fontRenderer = RenderManager.instance.getFontRenderer();
+        this.fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
     }
 
     public void drawHoveringText(String creativeTab, int mouseX, int mouseY)

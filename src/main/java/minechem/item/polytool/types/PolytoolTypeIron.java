@@ -5,14 +5,16 @@ import minechem.item.polytool.PolytoolItem;
 import minechem.item.polytool.PolytoolUpgradeType;
 import minechem.utils.CoordTuple;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
@@ -62,8 +64,8 @@ public class PolytoolTypeIron extends PolytoolUpgradeType
                     carbon = ((PolytoolUpgradeType)upgrade).power;
                 }
             }
-            int meta = world.getBlockMetadata(x1, y1, z1);
-            if (ores.containsKey(blockHash(id, meta)))
+            IBlockState state = world.getBlockState(new BlockPos(x1, y1, z1));
+            if (ores.containsKey(blockHash(id, state.getBlock().getMetaFromState(state))))
             {
                 int toMine = (int)power;
                 queue.add(new CoordTuple(x1, y1, z1));
@@ -73,13 +75,14 @@ public class PolytoolTypeIron extends PolytoolUpgradeType
                     int x = coord.x;
                     int y = coord.y;
                     int z = coord.z;
-                    for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+                    for (EnumFacing dir : EnumFacing.values())
                     {
-                        if (world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == id && world.getBlockMetadata(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == meta)
+                        if (world.getBlockState(new BlockPos(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ())).getBlock() == id
+                                && world.getBlockState(new BlockPos(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ())) == state)
                         {
 
-                            breakExtraBlock(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, player, id, meta, carbon);
-                            queue.add(new CoordTuple(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ));
+                            breakExtraBlock(world, x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ(), player, id, state.getBlock().getMetaFromState(state), carbon);
+                            queue.add(new CoordTuple(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ()));
                             toMine--;
                             if (toMine <= 0)
                             {
@@ -109,30 +112,30 @@ public class PolytoolTypeIron extends PolytoolUpgradeType
     {
         if (player.capabilities.isCreativeMode)
         {
-            block.onBlockHarvested(world, x, y, z, meta, player);
-            world.setBlockToAir(x, y, z);
+            block.onBlockHarvested(world, new BlockPos(x, y, z), block.getStateFromMeta(meta), player);
+            world.setBlockToAir(new BlockPos(x, y, z));
             if (!world.isRemote)
             {
-                ((EntityPlayerMP)player).playerNetServerHandler.sendPacket(new S23PacketBlockChange(x, y, z, world));
+                ((EntityPlayerMP)player).connection.sendPacket(new SPacketBlockChange(world, new BlockPos(x, y, z)));
             }
             return;
         }
 
         if (!world.isRemote)
         {
-            int bonus = (block == Blocks.diamond_ore || block == Blocks.coal_ore) ? (int)(world.rand.nextDouble() * Math.log(carbon)) + 1 : 1;
-            block.onBlockHarvested(world, x, y, z, meta, player);
+            int bonus = (block == Blocks.DIAMOND_ORE || block == Blocks.COAL_ORE) ? (int)(world.rand.nextDouble() * Math.log(carbon)) + 1 : 1;
+            block.onBlockHarvested(world, new BlockPos(x, y, z), block.getStateFromMeta(meta), player);
 
-            if (block.removedByPlayer(world, player, x, y, z, true))
+            if (block.removedByPlayer(block.getStateFromMeta(meta), world, new BlockPos(x, y, z), player, true))
             {
                 for (int i = 0; i < bonus; i++)
                 {
-                    block.harvestBlock(world, player, x, y, z, meta);
+                    block.harvestBlock(world, player, new BlockPos(x, y, z), block.getStateFromMeta(meta), null, null);
                 }
             }
 
             EntityPlayerMP mpPlayer = (EntityPlayerMP)player;
-            mpPlayer.playerNetServerHandler.sendPacket(new S23PacketBlockChange(x, y, z, world));
+            mpPlayer.connection.sendPacket(new SPacketBlockChange(world, new BlockPos(x, y, z)));
         }
     }
 

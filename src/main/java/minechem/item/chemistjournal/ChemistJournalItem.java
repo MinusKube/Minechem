@@ -1,22 +1,24 @@
 package minechem.item.chemistjournal;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.List;
 import minechem.Minechem;
 import minechem.gui.CreativeTabMinechem;
 import minechem.gui.GuiHandler;
-import minechem.reference.Textures;
 import minechem.utils.MinechemUtil;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChemistJournalItem extends Item
 {
@@ -32,7 +34,7 @@ public class ChemistJournalItem extends Item
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer, EnumHand hand)
     {
         // Opens the GUI for the chemists journal.
         if (!world.isRemote)
@@ -46,12 +48,12 @@ public class ChemistJournalItem extends Item
             }
 
             // Save the players username onto the book for owned by purposes.
-            tagCompound.setString(JOURNAL_OWNER_TAG, entityPlayer.getDisplayName());
+            tagCompound.setString(JOURNAL_OWNER_TAG, entityPlayer.getDisplayName().getFormattedText());
 
             itemStack.setTagCompound(tagCompound);
         }
 
-        return itemStack;
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStack);
     }
 
     @Override
@@ -161,13 +163,6 @@ public class ChemistJournalItem extends Item
             }
         }
         return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir)
-    {
-        itemIcon = ir.registerIcon(Textures.IIcon.CHEMIST_JOURNAL);
     }
 
 }

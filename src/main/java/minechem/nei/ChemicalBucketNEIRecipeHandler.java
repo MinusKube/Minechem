@@ -1,6 +1,6 @@
 package minechem.nei;
 
-import codechicken.nei.PositionedStack;
+import codechicken.nei.api.stack.PositionedStack;
 import codechicken.nei.recipe.ShapelessRecipeHandler;
 import minechem.MinechemItemsRegistration;
 import minechem.item.bucket.MinechemBucketHandler;
@@ -31,7 +31,7 @@ public class ChemicalBucketNEIRecipeHandler extends ShapelessRecipeHandler
             int meta = bucket.chemical instanceof ElementEnum ? ((ElementEnum) bucket.chemical).atomicNumber() : ((MoleculeEnum)bucket.chemical).id();
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(type, 1, meta));
-            recipe.add(new ItemStack(Items.bucket));
+            recipe.add(new ItemStack(Items.BUCKET));
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(type, 1, meta));
             arecipes.add(new CachedShapelessRecipe(recipe,result));
@@ -49,7 +49,7 @@ public class ChemicalBucketNEIRecipeHandler extends ShapelessRecipeHandler
     @Override
     public void loadUsageRecipes(ItemStack ingredient)
     {
-        if (ingredient.getItem() == Items.bucket)
+        if (ingredient.getItem() == Items.BUCKET)
         {
             arecipes.add(new CachedChemicalBucketRecipe());
         } else if (Compare.isStackAnElement(ingredient))
@@ -60,7 +60,7 @@ public class ChemicalBucketNEIRecipeHandler extends ShapelessRecipeHandler
             List<ItemStack> recipe = new ArrayList<ItemStack>();
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(ingredient.getItem(), 1, ingredient.getItemDamage()));
-            recipe.add(new ItemStack(Items.bucket));
+            recipe.add(new ItemStack(Items.BUCKET));
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(ingredient.getItem(), 1, ingredient.getItemDamage()));
             arecipes.add(new CachedShapelessRecipe(recipe,result));
@@ -72,7 +72,7 @@ public class ChemicalBucketNEIRecipeHandler extends ShapelessRecipeHandler
             List<ItemStack> recipe = new ArrayList<ItemStack>();
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(ingredient.getItem(), 1, ingredient.getItemDamage()));
-            recipe.add(new ItemStack(Items.bucket));
+            recipe.add(new ItemStack(Items.BUCKET));
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(ingredient.getItem(), 1, ingredient.getItemDamage()));
             arecipes.add(new CachedShapelessRecipe(recipe,result));
@@ -115,7 +115,7 @@ public class ChemicalBucketNEIRecipeHandler extends ShapelessRecipeHandler
             int meta = bucket.chemical instanceof ElementEnum ? ((ElementEnum) bucket.chemical).atomicNumber() : ((MoleculeEnum)bucket.chemical).id();
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(type, 1, meta));
-            recipe.add(new ItemStack(Items.bucket));
+            recipe.add(new ItemStack(Items.BUCKET));
             for (int i = 0 ; i < 4 ; i++)
                 recipe.add(new ItemStack(type, 1, meta));
             setIngredients(recipe);

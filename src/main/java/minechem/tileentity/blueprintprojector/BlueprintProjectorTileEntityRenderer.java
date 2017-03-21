@@ -15,7 +15,7 @@ public class BlueprintProjectorTileEntityRenderer extends TileEntitySpecialRende
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float scale)
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float scale, int i)
     {
         if (tileEntity instanceof BlueprintProjectorTileEntity)
         {

@@ -74,8 +74,8 @@ public class PolytoolGui extends GuiContainerTabbed
         {
             font = fontRendererObj;
         }
-        itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3);
-        itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), par1ItemStack, par2, par3 - (8), par4Str);
+        itemRender.renderItemAndEffectIntoGUI(par1ItemStack, par2, par3);
+        itemRender.renderItemOverlayIntoGUI(font, par1ItemStack, par2, par3 - (8), par4Str);
         this.zLevel = 3;
         itemRender.zLevel = 0.0F;
     }

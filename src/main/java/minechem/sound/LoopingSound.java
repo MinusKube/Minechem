@@ -1,21 +1,25 @@
 package minechem.sound;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
 public class LoopingSound
 {
 
-    private String sound;
+    private SoundEvent sound;
+    private SoundCategory soundCategory;
     private int soundLength;
     private int timer;
-    private Entity entity;
+    private EntityPlayer entity;
     private float volume;
     private float pitch;
 
-    public LoopingSound(String sound, int soundLength)
+    public LoopingSound(SoundEvent sound, SoundCategory soundCategory, int soundLength)
     {
         this.sound = sound;
+        this.soundCategory = soundCategory;
         this.soundLength = soundLength;
         this.volume = 1.0F;
         this.pitch = 1.0F;
@@ -39,10 +43,10 @@ public class LoopingSound
             timer = 0;
             if (this.entity == null)
             {
-                world.playSoundEffect(x, y, z, this.sound, this.volume, this.pitch);
+                world.playSound(x, y, z, this.sound, this.soundCategory, this.volume, this.pitch, false);
             } else
             {
-                world.playSoundAtEntity(this.entity, this.sound, this.volume, this.pitch);
+                world.playSound(this.entity, this.entity.getPosition(), this.sound, this.soundCategory, this.volume, this.pitch);
             }
         }
         timer++;

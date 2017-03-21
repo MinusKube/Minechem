@@ -1,12 +1,19 @@
 package minechem.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
-import minechem.network.message.*;
+import minechem.network.message.ChemistJournalActiveItemMessage;
+import minechem.network.message.DecomposerDumpFluidMessage;
+import minechem.network.message.DecomposerUpdateMessage;
+import minechem.network.message.FissionUpdateMessage;
+import minechem.network.message.FusionUpdateMessage;
+import minechem.network.message.GhostBlockMessage;
+import minechem.network.message.PolytoolUpdateMessage;
+import minechem.network.message.SynthesisUpdateMessage;
 import minechem.reference.Reference;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class MessageHandler implements IMessageHandler
 {

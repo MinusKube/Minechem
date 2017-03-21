@@ -11,18 +11,18 @@ public class PolytoolTypePlatnium extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        if (!target.worldObj.isRemote)
+        if (!target.world.isRemote)
         {
-            if (target.worldObj.rand.nextInt(50) < power + 1)
+            if (target.world.rand.nextInt(50) < power + 1)
             {
-                player.worldObj.playAuxSFX(2002, (int)Math.round(player.posX), (int)Math.round(player.posY), (int)Math.round(player.posZ), 0);
-                int i = (int)(power + player.worldObj.rand.nextInt(5) + player.worldObj.rand.nextInt(5));
+                player.world.playEvent(2002, player.getPosition(), 0);
+                int i = (int)(power + player.world.rand.nextInt(5) + player.world.rand.nextInt(5));
 
                 while (i > 0)
                 {
                     int j = EntityXPOrb.getXPSplit(i);
                     i -= j;
-                    player.worldObj.spawnEntityInWorld(new EntityXPOrb(player.worldObj, player.posX, player.posY, player.posZ, j));
+                    player.world.spawnEntity(new EntityXPOrb(player.world, player.posX, player.posY, player.posZ, j));
                 }
             }
         }

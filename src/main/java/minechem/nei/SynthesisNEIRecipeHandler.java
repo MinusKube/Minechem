@@ -1,11 +1,8 @@
 package minechem.nei;
 
-import codechicken.nei.NEIServerUtils;
-import codechicken.nei.PositionedStack;
+import codechicken.nei.api.stack.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+import codechicken.nei.util.NEIServerUtils;
 import minechem.gui.GuiDraw;
 import minechem.potion.PotionChemical;
 import minechem.reference.Resources;
@@ -14,6 +11,10 @@ import minechem.tileentity.synthesis.SynthesisRecipe;
 import minechem.utils.Compare;
 import minechem.utils.MinechemUtil;
 import net.minecraft.item.ItemStack;
+
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SynthesisNEIRecipeHandler extends TemplateRecipeHandler
 {

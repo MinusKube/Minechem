@@ -3,11 +3,13 @@ package minechem.item.polytool;
 import minechem.item.element.ElementAlloyEnum;
 import minechem.item.element.ElementEnum;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Iterator;
 
 public class PolytoolTypeAlloy extends PolytoolUpgradeType
 {
@@ -54,26 +56,42 @@ public class PolytoolTypeAlloy extends PolytoolUpgradeType
     public float getStrVsBlock(ItemStack itemStack, Block block, int meta)
     {
         // There must be a better way to do this
-        if (ForgeHooks.isToolEffective(new ItemStack(Items.diamond_pickaxe), block, meta))
+        if (isToolEffective(new ItemStack(Items.DIAMOND_PICKAXE), block, meta))
         {
             for (int id : OreDictionary.getOreIDs(new ItemStack(block, 1, meta)))
                 if (OreDictionary.getOreName(id).contains("stone")) return this.getStrStone();
-            if (block == Blocks.stone || block == Blocks.cobblestone)
+            if (block == Blocks.STONE || block == Blocks.COBBLESTONE)
             {
                 return this.getStrStone();
             }
             return this.getStrOre();
-        } else if (ForgeHooks.isToolEffective(new ItemStack(Items.diamond_shovel), block, meta))
+        } else if (isToolEffective(new ItemStack(Items.DIAMOND_SHOVEL), block, meta))
         {
             return this.getStrShovel();
-        } else if (ForgeHooks.isToolEffective(new ItemStack(Items.diamond_sword), block, meta))
+        } else if (isToolEffective(new ItemStack(Items.DIAMOND_SWORD), block, meta))
         {
             return this.getStrSword();
-        } else if (ForgeHooks.isToolEffective(new ItemStack(Items.diamond_axe), block, meta))
+        } else if (isToolEffective(new ItemStack(Items.DIAMOND_AXE), block, meta))
         {
             return this.getStrAxe();
         }
         return 0;
+    }
+
+    public boolean isToolEffective(ItemStack itemStack, Block block, int meta) {
+        IBlockState state = block.getStateFromMeta(meta);
+        Iterator var4 = itemStack.getItem().getToolClasses(itemStack).iterator();
+
+        String type;
+        do {
+            if(!var4.hasNext()) {
+                return false;
+            }
+
+            type = (String)var4.next();
+        } while(!state.getBlock().isToolEffective(type, state));
+
+        return true;
     }
 
     @Override

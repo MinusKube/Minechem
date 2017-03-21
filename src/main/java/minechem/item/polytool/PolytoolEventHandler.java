@@ -1,6 +1,5 @@
 package minechem.item.polytool;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import minechem.item.element.ElementEnum;
 import minechem.tileentity.decomposer.DecomposerRecipe;
 import minechem.tileentity.decomposer.DecomposerRecipeHandler;
@@ -14,6 +13,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,9 +26,9 @@ public class PolytoolEventHandler
 
     public void addDrops(LivingDropsEvent event, ItemStack dropStack)
     {
-        EntityItem entityitem = new EntityItem(event.entityLiving.worldObj, event.entityLiving.posX, event.entityLiving.posY, event.entityLiving.posZ, dropStack);
-        entityitem.delayBeforeCanPickup = 10;
-        event.drops.add(entityitem);
+        EntityItem entityitem = new EntityItem(event.getEntityLiving().world, event.getEntityLiving().posX, event.getEntityLiving().posY, event.getEntityLiving().posZ, dropStack);
+        entityitem.setPickupDelay(10);
+        event.getDrops().add(entityitem);
     }
 
     @SubscribeEvent
@@ -37,18 +37,18 @@ public class PolytoolEventHandler
 
         // Large page of the beheading code based off TiC code
         // Thanks to mDiyo
-        if ("player".equals(event.source.damageType))
+        if ("player".equals(event.getSource().damageType))
         {
 
-            EntityPlayer player = (EntityPlayer)event.source.getEntity();
-            ItemStack stack = player.getCurrentEquippedItem();
+            EntityPlayer player = (EntityPlayer)event.getSource().getEntity();
+            ItemStack stack = player.getActiveItemStack();
             if (stack != null && stack.getItem() instanceof PolytoolItem)
             {
                 float powerSilicon = PolytoolItem.getPowerOfType(stack, ElementEnum.Si);
                 if (powerSilicon > 0)
                 {
                     int amount = (int)Math.ceil(random.nextDouble() * powerSilicon);
-                    Iterator iter = event.drops.iterator();
+                    Iterator iter = event.getDrops().iterator();
                     if (random.nextInt(16) < 1 + powerSilicon)
                     {
                         ArrayList<EntityItem> trueResult = new ArrayList<EntityItem>();
@@ -66,7 +66,7 @@ public class PolytoolEventHandler
                                     ArrayList<ItemStack> items = MinechemUtil.convertChemicalsIntoItemStacks(recipe.getOutput());
                                     for (ItemStack itemStack : items)
                                     {
-                                        trueResult.add(new EntityItem(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, itemStack));
+                                        trueResult.add(new EntityItem(entityItem.world, entityItem.posX, entityItem.posY, entityItem.posZ, itemStack));
                                     }
                                 } else
                                 {
@@ -77,15 +77,15 @@ public class PolytoolEventHandler
                             }
 
                         }
-                        event.drops.clear();
-                        event.drops.addAll(trueResult);
+                        event.getDrops().clear();
+                        event.getDrops().addAll(trueResult);
                     }
                 }
             }
-            if (event.entityLiving instanceof EntitySkeleton || event.entityLiving instanceof EntityZombie || event.entityLiving instanceof EntityPlayer)
+            if (event.getEntityLiving() instanceof EntitySkeleton || event.getEntityLiving() instanceof EntityZombie || event.getEntityLiving() instanceof EntityPlayer)
             {
 
-                EntityLivingBase enemy = event.entityLiving;
+                EntityLivingBase enemy = event.getEntityLiving();
 
                 if (stack != null && stack.getItem() instanceof PolytoolItem)
                 {
@@ -97,12 +97,12 @@ public class PolytoolEventHandler
                         if (power > 0)
                         {
                             int amount = (int)Math.ceil(random.nextDouble() * power);
-                            addDrops(event, new ItemStack(Items.cooked_beef, amount, 0));
-                            Iterator iter = event.drops.iterator();
+                            addDrops(event, new ItemStack(Items.COOKED_BEEF, amount, 0));
+                            Iterator iter = event.getDrops().iterator();
                             while (iter.hasNext())
                             {
                                 EntityItem entityItem = (EntityItem)iter.next();
-                                if (entityItem.getEntityItem().getItem() == Items.rotten_flesh)
+                                if (entityItem.getEntityItem().getItem() == Items.ROTTEN_FLESH)
                                 {
                                     iter.remove();
                                 }
@@ -116,11 +116,11 @@ public class PolytoolEventHandler
                         if (power > 0)
                         {
                             int amount = (int)Math.ceil(random.nextDouble() * power);
-                            Iterator iter = event.drops.iterator();
+                            Iterator iter = event.getDrops().iterator();
                             while (iter.hasNext())
                             {
                                 EntityItem entityItem = (EntityItem)iter.next();
-                                if (entityItem.getEntityItem().getItem() == Items.bone)
+                                if (entityItem.getEntityItem().getItem() == Items.BONE)
                                 {
                                     entityItem.getEntityItem().stackSize += amount;
                                 }
@@ -133,18 +133,18 @@ public class PolytoolEventHandler
                     {
                         if (beheading > 0 && random.nextInt(5) < beheading * 10)
                         {
-                            if (event.entityLiving instanceof EntitySkeleton)
+                            if (event.getEntityLiving() instanceof EntitySkeleton)
                             {
                                 EntitySkeleton skeleton = (EntitySkeleton)enemy;
-                                addDrops(event, new ItemStack(Items.skull, 1, skeleton.getSkeletonType()));
-                            } else if (event.entityLiving instanceof EntityZombie)
+                                addDrops(event, new ItemStack(Items.SKULL, 1, skeleton.getSkeletonType().getId()));
+                            } else if (event.getEntityLiving() instanceof EntityZombie)
                             {
-                                addDrops(event, new ItemStack(Items.skull, 1, 2));
-                            } else if (event.entityLiving instanceof EntityPlayer)
+                                addDrops(event, new ItemStack(Items.SKULL, 1, 2));
+                            } else if (event.getEntityLiving() instanceof EntityPlayer)
                             {
-                                ItemStack dropStack = new ItemStack(Items.skull, 1, 3);
+                                ItemStack dropStack = new ItemStack(Items.SKULL, 1, 3);
                                 NBTTagCompound nametag = new NBTTagCompound();
-                                nametag.setString("SkullOwner", player.getDisplayName());
+                                nametag.setString("SkullOwner", player.getDisplayName().getFormattedText());
                                 addDrops(event, dropStack);
                             }
                         }

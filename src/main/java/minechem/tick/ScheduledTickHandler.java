@@ -1,15 +1,15 @@
 package minechem.tick;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
 import minechem.Settings;
 import minechem.item.molecule.MoleculeEnum;
 import minechem.potion.PharmacologyEffectRegistry;
 import minechem.radiation.RadiationHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ScheduledTickHandler
 {
@@ -25,11 +25,11 @@ public class ScheduledTickHandler
     }
 
     @SubscribeEvent
-    public void checkForPoison(PlayerUseItemEvent.Finish event)
+    public void checkForPoison(LivingEntityUseItemEvent.Finish event)
     {
-        if (event.item != null && event.item.getTagCompound() != null && Settings.FoodSpiking)
+        if (event.getItem() != null && event.getItem().getTagCompound() != null && Settings.FoodSpiking)
         {
-            NBTTagCompound stackTag = event.item.getTagCompound();
+            NBTTagCompound stackTag = event.getItem().getTagCompound();
             boolean isPoisoned = stackTag.getBoolean("minechem.isPoisoned");
             int[] effectTypes = stackTag.getIntArray("minechem.effectTypes");
             if (isPoisoned)
@@ -37,7 +37,7 @@ public class ScheduledTickHandler
                 for (int effectType : effectTypes)
                 {
                     MoleculeEnum molecule = MoleculeEnum.getById(effectType);
-                    PharmacologyEffectRegistry.applyEffect(molecule, event.entityPlayer);
+                    PharmacologyEffectRegistry.applyEffect(molecule, event.getEntityLiving());
                 }
             }
         }

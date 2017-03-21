@@ -7,6 +7,8 @@ import minechem.reference.Resources;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
+import java.io.IOException;
+
 public class GuiTableOfElements extends GuiContainerTabbed
 {
     public static final int GUI_WIDTH = 876;
@@ -39,14 +41,13 @@ public class GuiTableOfElements extends GuiContainerTabbed
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseButton)
-    {
+    protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
         super.mouseClicked(x, y, mouseButton);
         if (x == GUI_WIDTH - 411)
         {
             if (y == GUI_HEIGHT - 411)
             {
-                mc.thePlayer.openGui(Minechem.INSTANCE, 2, mc.theWorld, x, y, 0);
+                mc.player.openGui(Minechem.INSTANCE, 2, mc.world, x, y, 0);
             }
 
         }

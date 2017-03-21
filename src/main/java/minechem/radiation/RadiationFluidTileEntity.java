@@ -3,9 +3,10 @@ package minechem.radiation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+
+import javax.annotation.Nullable;
 
 public class RadiationFluidTileEntity extends TileEntity
 {
@@ -37,9 +38,9 @@ public class RadiationFluidTileEntity extends TileEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag)
+    public void deserializeNBT(NBTTagCompound tag)
     {
-        super.writeToNBT(tag);
+        super.deserializeNBT(tag);
         tag.setBoolean("isNull", info == null);
 
         if (info != null)
@@ -55,17 +56,17 @@ public class RadiationFluidTileEntity extends TileEntity
         }
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket()
-    {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         this.writeToNBT(tagCompound);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, tagCompound);
+        return new SPacketUpdateTileEntity(this.getPos(), 0, tagCompound);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
     {
-        this.readFromNBT(pkt.func_148857_g());
+        this.readFromNBT(pkt.getNbtCompound());
     }
 }

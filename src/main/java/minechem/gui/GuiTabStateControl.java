@@ -1,13 +1,12 @@
 package minechem.gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.reference.Resources;
 import minechem.tileentity.prefab.MinechemTileEntityElectric;
 import minechem.utils.MinechemUtil;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class GuiTabStateControl extends GuiTab
 {
@@ -22,8 +21,6 @@ public abstract class GuiTabStateControl extends GuiTab
         public String tooltip;
         public int color;
 
-        @SideOnly(Side.CLIENT)
-        public IIcon icon;
         @SideOnly(Side.CLIENT)
         public ResourceLocation resource;
 

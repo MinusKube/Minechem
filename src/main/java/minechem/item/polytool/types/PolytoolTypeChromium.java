@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class PolytoolTypeChromium extends PolytoolUpgradeType
@@ -16,11 +17,11 @@ public class PolytoolTypeChromium extends PolytoolUpgradeType
     {
         if (!world.isRemote && rand.nextInt(10) < power)
         {
-            if (block == Blocks.wool)
+            if (block == Blocks.WOOL)
             {
-                world.setBlockToAir(x, y, z);
+                world.setBlockToAir(new BlockPos(x, y, z));
 
-                world.spawnEntityInWorld(new EntityItem(world, x + rand.nextDouble(), y + rand.nextDouble(), z + rand.nextDouble(), new ItemStack(Blocks.wool, 1, rand.nextInt(15))));
+                world.spawnEntity(new EntityItem(world, x + rand.nextDouble(), y + rand.nextDouble(), z + rand.nextDouble(), new ItemStack(Blocks.WOOL, 1, rand.nextInt(15))));
             }
         }
 

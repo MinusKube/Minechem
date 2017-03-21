@@ -1,7 +1,5 @@
 package minechem.item.chemistjournal;
 
-import java.util.ArrayList;
-import java.util.List;
 import minechem.MinechemItemsRegistration;
 import minechem.gui.GuiContainerTabbed;
 import minechem.gui.GuiFakeSlot;
@@ -25,6 +23,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChemistJournalGui extends GuiContainerTabbed implements IVerticalScrollContainer
 {
@@ -107,8 +109,7 @@ public class ChemistJournalGui extends GuiContainerTabbed implements IVerticalSc
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseButton)
-    {
+    protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
         super.mouseClicked(x, y, mouseButton);
         GuiFakeSlot clickedSlot = null;
         for (GuiFakeSlot slot : itemListSlots)
@@ -131,7 +132,7 @@ public class ChemistJournalGui extends GuiContainerTabbed implements IVerticalSc
         // only leave GUI when ESC is pressed
         if (keyCode == 1)
         {
-            this.mc.thePlayer.closeScreen();
+            this.mc.player.closeScreen();
         }
         searchBar.keyTyped(character, keyCode);
         populateItemList();
@@ -414,8 +415,7 @@ public class ChemistJournalGui extends GuiContainerTabbed implements IVerticalSc
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;

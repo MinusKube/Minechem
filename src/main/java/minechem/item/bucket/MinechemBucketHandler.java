@@ -1,11 +1,5 @@
 package minechem.item.bucket;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import minechem.Minechem;
 import minechem.fluid.MinechemBucketDispenser;
 import minechem.fluid.MinechemFluid;
@@ -23,14 +17,22 @@ import minechem.reference.Reference;
 import minechem.tileentity.decomposer.DecomposerRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MinechemBucketHandler
 {
@@ -54,33 +56,34 @@ public class MinechemBucketHandler
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent event)
     {
-        ItemStack result = fillCustomBucket(event.world, event.target);
+        ItemStack result = fillCustomBucket(event.getWorld(), event.getTarget());
 
         if (result == null)
         {
             return;
         }
 
-        event.result = result;
+        event.setFilledBucket(result);
         event.setResult(Event.Result.ALLOW);
     }
 
-    private ItemStack fillCustomBucket(World world, MovingObjectPosition pos)
+    private ItemStack fillCustomBucket(World world, RayTraceResult pos)
     {
-        Block block = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
+        IBlockState state = world.getBlockState(pos.getBlockPos());
+        Block block = state.getBlock();
 
         Item bucket = buckets.get(block);
 
-        if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0)
+        if (bucket != null && block.getMetaFromState(state) == 0)
         {
             ItemStack stack = new ItemStack(bucket);
-            TileEntity tile = world.getTileEntity(pos.blockX, pos.blockY, pos.blockZ);
+            TileEntity tile = world.getTileEntity(pos.getBlockPos());
             RadiationEnum radiation = ((MinechemBucketItem) bucket).chemical.radioactivity();
             if (tile != null && radiation != RadiationEnum.stable && tile instanceof RadiationFluidTileEntity && ((RadiationFluidTileEntity) tile).info != null)
             {
                 RadiationInfo.setRadiationInfo(((RadiationFluidTileEntity) tile).info, stack);
             }
-            world.setBlockToAir(pos.blockX, pos.blockY, pos.blockZ);
+            world.setBlockToAir(pos.getBlockPos());
             return stack;
         } else
         {
@@ -116,10 +119,10 @@ public class MinechemBucketHandler
 
         MinechemBucketItem bucket = new MinechemBucketItem(block, block.getFluid(), type);
         GameRegistry.registerItem(bucket, Reference.ID + "Bucket." + prefix + block.getFluid().getName());
-        FluidContainerRegistry.registerFluidContainer(block.getFluid(), new ItemStack(bucket), new ItemStack(Items.bucket));
+        FluidContainerRegistry.registerFluidContainer(block.getFluid(), new ItemStack(bucket), new ItemStack(Items.BUCKET));
         buckets.put(block, bucket);
         Minechem.PROXY.onAddBucket(bucket);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(bucket, MinechemBucketDispenser.dispenser);
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(bucket, MinechemBucketDispenser.dispenser);
     }
 
     public void registerBucketRecipes()

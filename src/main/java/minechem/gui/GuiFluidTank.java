@@ -1,17 +1,17 @@
 package minechem.gui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import minechem.reference.Resources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class GuiFluidTank extends Gui
 {
@@ -37,7 +37,11 @@ public class GuiFluidTank extends Gui
 
         if (fluidStack != null && fluidStack.amount > 0)
         {
-            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
+            /*
+
+            TODO: Find a new way to do this
 
             IIcon fluidIcon = fluidStack.getFluid().getStillIcon();
             drawTexturedModelRectFromIcon(x + posX + 1, y + posY + 2, fluidIcon, 16, iconHeightRemainder);
@@ -45,7 +49,7 @@ public class GuiFluidTank extends Gui
             for (int i = 0; i < (39 - 6) / 16; i++)
             {
                 drawTexturedModelRectFromIcon(x + posX + 1, y + posY + 2 + i * 16 + iconHeightRemainder, fluidIcon, 16, 16);
-            }
+            }*/
 
             Minecraft.getMinecraft().renderEngine.bindTexture(Resources.Gui.TANK);
             drawTexturedModalRect(x + posX + 2, y + posY + 1, 1, 1, 15, 37 - ((int) ((38) * ((float) fluidStack.amount / capacity))));
@@ -79,7 +83,7 @@ public class GuiFluidTank extends Gui
                 description.add(amountToText);
             }
         }
-        drawHoveringText(description, x, y, Minecraft.getMinecraft().fontRenderer);
+        drawHoveringText(description, x, y, Minecraft.getMinecraft().fontRendererObj);
     }
 
     private boolean mouseInTank(int x, int y)

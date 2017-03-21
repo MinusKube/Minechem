@@ -1,7 +1,5 @@
 package minechem.item.bucket;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.fluid.FluidElement;
 import minechem.fluid.FluidMolecule;
 import minechem.gui.CreativeTabMinechem;
@@ -10,31 +8,31 @@ import minechem.item.molecule.MoleculeEnum;
 import minechem.radiation.RadiationEnum;
 import minechem.radiation.RadiationFluidTileEntity;
 import minechem.radiation.RadiationInfo;
-import minechem.reference.Textures;
 import minechem.utils.Constants;
 import minechem.utils.MinechemUtil;
 import minechem.utils.TimeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
 public class MinechemBucketItem extends ItemBucket
 {
-
-    @SideOnly(Side.CLIENT)
-    public IIcon[] icons;
 
     public final Fluid fluid;
     public final Block block;
@@ -44,7 +42,7 @@ public class MinechemBucketItem extends ItemBucket
     {
         super(block);
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_BUCKETS);
-        setContainerItem(Items.bucket);
+        setContainerItem(Items.BUCKET);
         setUnlocalizedName("minechemBucket");
         this.fluid = fluid;
         this.block = block;
@@ -89,7 +87,7 @@ public class MinechemBucketItem extends ItemBucket
         String timeLeft = "";
         if (RadiationInfo.getRadioactivity(itemstack) != RadiationEnum.stable && itemstack.getTagCompound() != null)
         {
-            long worldTime = player.worldObj.getTotalWorldTime();
+            long worldTime = player.world.getTotalWorldTime();
             timeLeft = TimeHelper.getTimeFromTicks(RadiationInfo.getRadioactivity(itemstack).getLife() - (worldTime - itemstack.getTagCompound().getLong("decayStart")));
         }
         list.add(radioactivityColor + radioactiveName + (timeLeft.equals("") ? "" : " (" + timeLeft + ")"));
@@ -123,38 +121,29 @@ public class MinechemBucketItem extends ItemBucket
         return "";
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir)
-    {
-        icons = new IIcon[2];
-        icons[0] = ir.registerIcon(Textures.IIcon.BUCKET_EMPTY);
-        icons[1] = ir.registerIcon(Textures.IIcon.BUCKET_CONTENT);
-    }
-
     public boolean placeLiquid(World world, ItemStack itemstack, int x, int y, int z)
     {
-        Material material = world.getBlock(x, y, z).getMaterial();
+        Material material = world.getBlockState(new BlockPos(x, y, z)).getMaterial();
         boolean flag = !material.isSolid();
 
-        if (!world.isAirBlock(x, y, z) && !flag)
+        if (!world.isAirBlock(new BlockPos(x, y, z)) && !flag)
         {
             return false;
         } else
         {
             if (!world.isRemote && flag && !material.isLiquid())
             {
-                world.func_147480_a(x, y, z, true);
+                world.destroyBlock(new BlockPos(x, y, z), true);
             }
 
-            world.setBlock(x, y, z, this.block, 0, 3);
+            world.setBlockState(new BlockPos(x, y, z), this.block.getStateFromMeta(0), 3);
 
-            TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
             if (chemical.radioactivity() != RadiationEnum.stable && tile instanceof RadiationFluidTileEntity)
             {
-                int dimensionID = itemstack.stackTagCompound.getInteger("dimensionID");
-                long lastUpdate = itemstack.stackTagCompound.getLong("lastUpdate");
-                long decayStart = itemstack.stackTagCompound.getLong("decayStart");
+                int dimensionID = itemstack.getTagCompound().getInteger("dimensionID");
+                long lastUpdate = itemstack.getTagCompound().getLong("lastUpdate");
+                long decayStart = itemstack.getTagCompound().getLong("decayStart");
                 RadiationInfo radioactivity = new RadiationInfo(itemstack, decayStart, lastUpdate, dimensionID, chemical.radioactivity());
 
                 ((RadiationFluidTileEntity) tile).info = radioactivity;
@@ -164,27 +153,27 @@ public class MinechemBucketItem extends ItemBucket
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand)
     {
-        MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(world, player, false);
+        RayTraceResult rayTrace = this.rayTrace(world, player, false);
 
-        if (movingobjectposition == null)
+        if (rayTrace == null)
         {
-            return itemStack;
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
         } else
         {
-            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            if (rayTrace.typeOfHit == RayTraceResult.Type.BLOCK)
             {
-                int x = movingobjectposition.blockX;
-                int y = movingobjectposition.blockY;
-                int z = movingobjectposition.blockZ;
+                int x = rayTrace.getBlockPos().getX();
+                int y = rayTrace.getBlockPos().getY();
+                int z = rayTrace.getBlockPos().getZ();
 
-                if (!world.canMineBlock(player, x, y, z))
+                if (!world.canMineBlockBody(player, rayTrace.getBlockPos()))
                 {
-                    return itemStack;
+                    return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
                 }
 
-                switch (movingobjectposition.sideHit)
+                switch (rayTrace.sideHit.getIndex())
                 {
                     case 0:
                         y--;
@@ -211,18 +200,18 @@ public class MinechemBucketItem extends ItemBucket
                         break;
                 }
 
-                if (!player.canPlayerEdit(x, y, z, movingobjectposition.sideHit, itemStack))
+                if (!player.canPlayerEdit(rayTrace.getBlockPos(), rayTrace.sideHit, itemStack))
                 {
-                    return itemStack;
+                    return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
                 }
 
                 if (this.placeLiquid(world, itemStack, x, y, z) && !player.capabilities.isCreativeMode)
                 {
-                    return new ItemStack(Items.bucket);
+                    return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(Items.BUCKET));
                 }
             }
 
-            return itemStack;
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStack);
         }
     }
 
@@ -230,9 +219,9 @@ public class MinechemBucketItem extends ItemBucket
     public void onCreated(ItemStack itemStack, World world, EntityPlayer player)
     {
         super.onCreated(itemStack, world, player);
-        if (RadiationInfo.getRadioactivity(itemStack) != RadiationEnum.stable && itemStack.stackTagCompound == null)
+        if (RadiationInfo.getRadioactivity(itemStack) != RadiationEnum.stable && itemStack.getTagCompound() == null)
         {
-            RadiationInfo.setRadiationInfo(new RadiationInfo(itemStack, world.getTotalWorldTime(), world.getTotalWorldTime(), world.provider.dimensionId, RadiationInfo.getRadioactivity(itemStack)), itemStack);
+            RadiationInfo.setRadiationInfo(new RadiationInfo(itemStack, world.getTotalWorldTime(), world.getTotalWorldTime(), world.provider.getDimension(), RadiationInfo.getRadioactivity(itemStack)), itemStack);
         }
     }
 }

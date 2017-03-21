@@ -1,22 +1,24 @@
 package minechem.network.message;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import minechem.tileentity.decomposer.DecomposerTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class DecomposerUpdateMessage implements IMessage, IMessageHandler<DecomposerUpdateMessage, IMessage>
 {
     private int posX, posY, posZ;
     private int energyStored, state;
-    private int fluidId, fluidAmount;
+    private int fluidAmount;
+    private String fluidName;
 
     public DecomposerUpdateMessage()
     {
@@ -25,20 +27,20 @@ public class DecomposerUpdateMessage implements IMessage, IMessageHandler<Decomp
 
     public DecomposerUpdateMessage(DecomposerTileEntity tile)
     {
-        this.posX = tile.xCoord;
-        this.posY = tile.yCoord;
-        this.posZ = tile.zCoord;
+        this.posX = tile.getPos().getX();
+        this.posY = tile.getPos().getY();
+        this.posZ = tile.getPos().getZ();
 
         this.energyStored = tile.getEnergyStored();
         this.state = tile.getState().ordinal();
 
         if (tile.tank != null)
         {
-            this.fluidId = tile.tank.getFluidID();
+            this.fluidName = tile.tank.getFluid().getName();
             this.fluidAmount = tile.tank.amount;
         } else
         {
-            this.fluidId = -1;
+            this.fluidName = null;
             this.fluidAmount = -1;
         }
     }
@@ -53,7 +55,10 @@ public class DecomposerUpdateMessage implements IMessage, IMessageHandler<Decomp
         this.energyStored = buf.readInt();
         this.state = buf.readInt();
 
-        this.fluidId = buf.readInt();
+        byte[] data = new byte[buf.readableBytes()];
+        buf.readBytes(data);
+
+        this.fluidName = new String(data);
         this.fluidAmount = buf.readInt();
     }
 
@@ -67,7 +72,7 @@ public class DecomposerUpdateMessage implements IMessage, IMessageHandler<Decomp
         buf.writeInt(this.energyStored);
         buf.writeInt(this.state);
 
-        buf.writeInt(this.fluidId);
+        buf.writeBytes(this.fluidName.getBytes());
         buf.writeInt(this.fluidAmount);
     }
 
@@ -77,19 +82,19 @@ public class DecomposerUpdateMessage implements IMessage, IMessageHandler<Decomp
         TileEntity tileEntity;
         if (ctx.side == Side.CLIENT)
         {
-            tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.posX, message.posY, message.posZ);
+            tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         } else
         {
-            tileEntity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTileEntity(message.posX, message.posY, message.posZ);
+            tileEntity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         }
         if (tileEntity instanceof DecomposerTileEntity)
         {
             ((DecomposerTileEntity) tileEntity).syncEnergyValue(message.energyStored);
             ((DecomposerTileEntity) tileEntity).setState(message.state);
             FluidStack tankStack = null;
-            if (message.fluidId != -1)
+            if (message.fluidName != null)
             {
-                tankStack = new FluidStack(FluidRegistry.getFluid(message.fluidId), message.fluidAmount);
+                tankStack = new FluidStack(FluidRegistry.getFluid(message.fluidName), message.fluidAmount);
             }
             ((DecomposerTileEntity) tileEntity).tank = tankStack;
         }

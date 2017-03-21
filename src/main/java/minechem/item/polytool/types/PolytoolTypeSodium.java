@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class PolytoolTypeSodium extends PolytoolUpgradeType
@@ -16,10 +17,10 @@ public class PolytoolTypeSodium extends PolytoolUpgradeType
         x = (int)Math.floor(entityLiving.posX);
         y = (int)Math.floor(entityLiving.posY);
         z = (int)Math.floor(entityLiving.posZ);
-        if (!world.isRemote && world.rand.nextInt(35) < power && world.getBlockLightValue(x, y, z) < 12)
+        if (!world.isRemote && world.rand.nextInt(35) < power && world.getLight(new BlockPos(x, y, z)) < 12)
         {
-            if (Blocks.torch.canPlaceBlockAt(world, x, y, z))
-                world.setBlock((int)Math.floor(entityLiving.posX), (int)Math.floor(entityLiving.posY), (int)Math.floor(entityLiving.posZ), Blocks.torch, 0, 3);
+            if (Blocks.TORCH.canPlaceBlockAt(world, new BlockPos(x, y, z)))
+                world.setBlockState(entityLiving.getPosition(), Blocks.TORCH.getStateFromMeta(0), 3);
         }
     }
 

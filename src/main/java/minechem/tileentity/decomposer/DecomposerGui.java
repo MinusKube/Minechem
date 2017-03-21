@@ -10,6 +10,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import org.lwjgl.opengl.GL11;
 
+import java.io.IOException;
+
 public class DecomposerGui extends GuiContainerTabbed
 {
     private DecomposerTileEntity decomposer;
@@ -50,8 +52,7 @@ public class DecomposerGui extends GuiContainerTabbed
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseButton)
-    {
+    protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
         super.mouseClicked(x, y, mouseButton);
         if (mouseInButton(mouseX, mouseY))
         {

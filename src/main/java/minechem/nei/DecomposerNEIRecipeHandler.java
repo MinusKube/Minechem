@@ -1,13 +1,7 @@
 package minechem.nei;
 
-import static codechicken.lib.gui.GuiDraw.changeTexture;
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
-import codechicken.nei.PositionedStack;
+import codechicken.nei.api.stack.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import minechem.gui.GuiDraw;
 import minechem.potion.PotionChemical;
 import minechem.reference.Resources;
@@ -22,6 +16,14 @@ import minechem.utils.LogHelper;
 import minechem.utils.MinechemUtil;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
+
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static codechicken.lib.gui.GuiDraw.changeTexture;
+import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
 public class DecomposerNEIRecipeHandler extends TemplateRecipeHandler
 {

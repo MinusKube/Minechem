@@ -5,16 +5,6 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.server.FMLServerHandler;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.regex.Pattern;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.fluid.FluidElement;
@@ -42,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -52,6 +43,17 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class MinechemUtil
 {
@@ -639,18 +641,18 @@ public final class MinechemUtil
         return false;
     }
 
-    public static ForgeDirection getDirectionFromFacing(int facing)
+    public static EnumFacing getDirectionFromFacing(int facing)
     {
         switch (facing)
         {
             case 0:
-                return ForgeDirection.SOUTH;
+                return EnumFacing.SOUTH;
             case 1:
-                return ForgeDirection.WEST;
+                return EnumFacing.WEST;
             case 2:
-                return ForgeDirection.NORTH;
+                return EnumFacing.NORTH;
             case 3:
-                return ForgeDirection.EAST;
+                return EnumFacing.EAST;
             default:
                 return null;
         }

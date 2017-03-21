@@ -29,6 +29,10 @@ public abstract class MinechemTileEntityBase extends TileEntity
         return this.blockType;
     }
 
+    public void setBlockType(Block block) {
+        this.blockType = block;
+    }
+
     /**
      * Called on the TileEntity's first tick.
      */

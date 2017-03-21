@@ -1,16 +1,12 @@
 package minechem.render;
 
 import minechem.item.element.ElementEnum;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import org.lwjgl.opengl.GL11;
 
 public final class RenderingUtil
 {
 
-    public static void drawTextureIn3D(IIcon texture)
+    /*public static void drawTextureIn3D(IIcon texture)
     {
         Tessellator tesselator = Tessellator.instance;
         float scale = 0.7F;
@@ -29,7 +25,7 @@ public final class RenderingUtil
         tesselator.addVertexWithUV(x + w, y, z, icon.getMaxU(), icon.getMinV());
         tesselator.addVertexWithUV(x, y, z, icon.getMinU(), icon.getMinV());
         tesselator.draw();
-    }
+    }*/
 
     public static void setColorForElement(ElementEnum element)
     {
@@ -70,7 +66,7 @@ public final class RenderingUtil
         }
     }
 
-    public static void drawTexturedRectUV(float x, float y, float z, int w, int h, IIcon icon)
+    /*public static void drawTexturedRectUV(float x, float y, float z, int w, int h, IIcon icon)
     {
         Tessellator tesselator = Tessellator.instance;
         tesselator.startDrawingQuads();
@@ -79,6 +75,6 @@ public final class RenderingUtil
         tesselator.addVertexWithUV(x + w, y, z, icon.getMaxU(), icon.getMinV());
         tesselator.addVertexWithUV(x, y, z, icon.getMinU(), icon.getMinV());
         tesselator.draw();
-    }
+    }*/
 
 }

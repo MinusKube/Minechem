@@ -1,9 +1,10 @@
 package minechem.potion;
 
-import java.util.ArrayList;
 import minechem.item.molecule.Molecule;
 import minechem.item.molecule.MoleculeEnum;
-import net.minecraft.util.StatCollector;
+import net.minecraft.client.resources.I18n;
+
+import java.util.ArrayList;
 
 public enum PotionMineralEnum
 {
@@ -24,7 +25,7 @@ public enum PotionMineralEnum
      */
     public String getName()
     {
-        String localizedName = StatCollector.translateToLocal(this.localizationKey);
+        String localizedName = I18n.format(this.localizationKey);
         if (localizedName.isEmpty())
         {
             return localizationKey;

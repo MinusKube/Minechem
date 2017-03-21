@@ -4,6 +4,7 @@ import minechem.item.element.ElementEnum;
 import minechem.item.polytool.PolytoolUpgradeType;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 public class PolytoolTypeTitanium extends PolytoolUpgradeType
@@ -13,7 +14,7 @@ public class PolytoolTypeTitanium extends PolytoolUpgradeType
     {
         if (target instanceof EntityLiving)
         {
-            ((EntityLiving)target).setEquipmentDropChance(0, 0.8F);
+            ((EntityLiving)target).setDropChance(EntityEquipmentSlot.MAINHAND, 0.8F);
         }
     }
 

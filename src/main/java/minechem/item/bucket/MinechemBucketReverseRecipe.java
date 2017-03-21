@@ -1,11 +1,11 @@
 package minechem.item.bucket;
 
 import minechem.MinechemItemsRegistration;
+import minechem.Settings;
 import minechem.item.MinechemChemicalType;
 import minechem.item.element.ElementEnum;
 import minechem.item.molecule.MoleculeEnum;
 import minechem.radiation.RadiationEnum;
-import minechem.Settings;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -52,7 +52,7 @@ public class MinechemBucketReverseRecipe implements IRecipe
                 {
                     return false;
                 }
-            } else if (itemStack.getItem() == Items.water_bucket)
+            } else if (itemStack.getItem() == Items.WATER_BUCKET)
             {
                 if (!Settings.enableWaterBucketIntoH2ORecipe)
                 {
@@ -89,7 +89,7 @@ public class MinechemBucketReverseRecipe implements IRecipe
         }
 
         ItemStack output = getRecipeOutput();
-        output.stackTagCompound = bucketStack.stackTagCompound;
+        output.setTagCompound(bucketStack.getTagCompound());
         return output;
     }
 
@@ -115,4 +115,10 @@ public class MinechemBucketReverseRecipe implements IRecipe
         }
         return null;
     }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inventoryCrafting) {
+        return new ItemStack[0];
+    }
+
 }

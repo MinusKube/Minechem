@@ -1,12 +1,12 @@
 package minechem.render;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import minechem.potion.PotionInjector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 
 //Thanks to thepers for teaching me rendering - Mandrake
@@ -18,7 +18,7 @@ public class EffectsRenderer
         Minecraft mc = FMLClientHandler.instance().getClient();
 //        if (mc.isSingleplayer())
 //        {
-        EntityPlayer player = mc.thePlayer;
+        EntityPlayer player = mc.player;
         if (player != null && player.isPotionActive(PotionInjector.atropineHigh))
         {
             PotionEffect DHigh = player.getActivePotionEffect(PotionInjector.atropineHigh);
@@ -45,7 +45,7 @@ public class EffectsRenderer
      * GL11.glPopMatrix(); GL11.glDisable(GL11.GL_BLEND); GL11.glEnable(GL11.GL_ALPHA_TEST); } */
     public static void RenderDelirium(int markiplier)
     {
-        ScaledResolution scale = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        ScaledResolution scale = new ScaledResolution(Minecraft.getMinecraft());
         int width = scale.getScaledWidth();
         int height = scale.getScaledHeight();
         Gui gui = new Gui();

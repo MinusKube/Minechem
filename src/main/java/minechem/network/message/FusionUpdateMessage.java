@@ -1,12 +1,13 @@
 package minechem.network.message;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import minechem.tileentity.multiblock.fusion.FusionTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class FusionUpdateMessage implements IMessage, IMessageHandler<FusionUpdateMessage, IMessage>
 {
@@ -20,9 +21,9 @@ public class FusionUpdateMessage implements IMessage, IMessageHandler<FusionUpda
 
     public FusionUpdateMessage(FusionTileEntity tile)
     {
-        this.posX = tile.xCoord;
-        this.posY = tile.yCoord;
-        this.posZ = tile.zCoord;
+        this.posX = tile.getPos().getX();
+        this.posY = tile.getPos().getY();
+        this.posZ = tile.getPos().getZ();
 
         this.energyStored = tile.getEnergyStored();
     }
@@ -50,7 +51,7 @@ public class FusionUpdateMessage implements IMessage, IMessageHandler<FusionUpda
     @Override
     public IMessage onMessage(FusionUpdateMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.posX, message.posY, message.posZ);
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof FusionTileEntity)
         {
             ((FusionTileEntity) tileEntity).syncEnergyValue(message.energyStored);

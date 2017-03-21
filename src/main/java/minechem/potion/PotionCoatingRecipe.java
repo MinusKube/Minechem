@@ -3,6 +3,7 @@ package minechem.potion;
 import minechem.Settings;
 import minechem.item.molecule.MoleculeEnum;
 import minechem.item.molecule.MoleculeItem;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -67,7 +68,7 @@ public class PotionCoatingRecipe implements IRecipe
                             for (int k = 0; k < l.tagCount(); k++)
                             {
                                 NBTTagCompound tag = l.getCompoundTagAt(k);
-                                if (tag.getShort("id") == PotionEnchantmentCoated.chemLookup.get(MoleculeEnum.getById(s2.getItemDamage())).effectId)
+                                if (tag.getShort("id") == Enchantment.getEnchantmentID(PotionEnchantmentCoated.chemLookup.get(MoleculeEnum.getById(s2.getItemDamage()))))
                                 {
                                     level = tag.getShort("lvl");
                                     ItemStack result = s.copy();
@@ -95,6 +96,11 @@ public class PotionCoatingRecipe implements IRecipe
     public ItemStack getRecipeOutput()
     {
         return null;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inventoryCrafting) {
+        return new ItemStack[0];
     }
 
 }

@@ -2,29 +2,31 @@ package minechem.item.polytool;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.Minechem;
 import minechem.gui.CreativeTabMinechem;
 import minechem.gui.GuiHandler;
 import minechem.item.element.ElementEnum;
 import minechem.item.element.ElementItem;
-import minechem.reference.Textures;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,13 +66,13 @@ public class PolytoolItem extends ItemPickaxe
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack par1ItemStack, World world, EntityPlayer entityPlayer)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack par1ItemStack, World world, EntityPlayer entityPlayer, EnumHand hand)
     {
         // Copied from journal code
         // I don't know why chunkCoordX is used
         // But LJDP probably knows, and he is smarter than me
         entityPlayer.openGui(Minechem.INSTANCE, GuiHandler.GUI_ID_POLYTOOL, world, entityPlayer.chunkCoordX, entityPlayer.chunkCoordY, entityPlayer.chunkCoordY);
-        return par1ItemStack;
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, par1ItemStack);
     }
 
     public float getSwordStr(ItemStack stack)
@@ -108,18 +110,11 @@ public class PolytoolItem extends ItemPickaxe
         return result;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir)
-    {
-        itemIcon = ir.registerIcon(Textures.IIcon.POLYTOOL);
-    }
-
     public static ArrayList<PolytoolUpgradeType> getUpgrades(ItemStack stack)
     {
         ensureNBT(stack);
         ArrayList<PolytoolUpgradeType> toReturn = new ArrayList<PolytoolUpgradeType>();
-        NBTTagList list = stack.stackTagCompound.getTagList("Upgrades", Constants.NBT.TAG_COMPOUND);
+        NBTTagList list = stack.getTagCompound().getTagList("Upgrades", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
             NBTTagCompound nbt = list.getCompoundTagAt(i);
@@ -153,13 +148,13 @@ public class PolytoolItem extends ItemPickaxe
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack p_150894_1_, World p_150894_2_, Block p_150894_3_, int p_150894_4_, int p_150894_5_, int p_150894_6_, EntityLivingBase p_150894_7_)
+    public boolean onBlockDestroyed(ItemStack p_150894_1_, World p_150894_2_, IBlockState state, BlockPos pos, EntityLivingBase p_150894_7_)
     {
         ArrayList upgrades = getUpgrades(p_150894_1_);
         Iterator iter = upgrades.iterator();
         while (iter.hasNext())
         {
-            ((PolytoolUpgradeType)iter.next()).onBlockDestroyed(p_150894_1_, p_150894_2_, p_150894_3_, p_150894_4_, p_150894_5_, p_150894_6_, p_150894_7_);
+            ((PolytoolUpgradeType)iter.next()).onBlockDestroyed(p_150894_1_, p_150894_2_, state.getBlock(), pos.getX(), pos.getY(), pos.getZ(), p_150894_7_);
         }
         return true;
     }
@@ -168,7 +163,7 @@ public class PolytoolItem extends ItemPickaxe
     {
         ensureNBT(stack);
         NBTTagCompound compound = new NBTTagCompound();
-        NBTTagList list = stack.stackTagCompound.getTagList("Upgrades", Constants.NBT.TAG_COMPOUND);
+        NBTTagList list = stack.getTagCompound().getTagList("Upgrades", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
             if (list.getCompoundTagAt(i).getInteger("Element") == type.getElement().atomicNumber())
@@ -197,17 +192,17 @@ public class PolytoolItem extends ItemPickaxe
 
     public static void ensureNBT(ItemStack item)
     {
-        if (item.stackTagCompound == null)
+        if (item.getTagCompound() == null)
         {
-            item.stackTagCompound = new NBTTagCompound();
+            item.setTagCompound(new NBTTagCompound());
         }
-        if (!item.stackTagCompound.hasKey("Upgrades"))
+        if (!item.getTagCompound().hasKey("Upgrades"))
         {
-            item.stackTagCompound.setTag("Upgrades", new NBTTagList());
+            item.getTagCompound().setTag("Upgrades", new NBTTagList());
         }
-        if (!item.stackTagCompound.hasKey("Energy"))
+        if (!item.getTagCompound().hasKey("Energy"))
         {
-            item.stackTagCompound.setInteger("Energy", 0);
+            item.getTagCompound().setInteger("Energy", 0);
         }
     }
 
@@ -227,18 +222,18 @@ public class PolytoolItem extends ItemPickaxe
     }
 
     @Override
-    public float getDigSpeed(ItemStack stack, Block block, int meta)
+    public float getStrVsBlock(ItemStack stack, IBlockState state)
     {
         float result = 8F;
-        for (Iterator<PolytoolUpgradeType> itr = getUpgrades(stack).iterator(); itr.hasNext(); result += itr.next().getStrVsBlock(stack, block, meta));
+        for (Iterator<PolytoolUpgradeType> itr = getUpgrades(stack).iterator(); itr.hasNext(); result += itr.next().getStrVsBlock(stack, state.getBlock(), state.getBlock().getMetaFromState(state)));
         return result;
     }
 
     @Override
-    public Multimap getAttributeModifiers(ItemStack stack)
+    public Multimap getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
     {
         Multimap multimap = HashMultimap.create();
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", getSwordStr(stack), 0));
+        multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getSwordStr(stack), 0));
         return multimap;
     }
 

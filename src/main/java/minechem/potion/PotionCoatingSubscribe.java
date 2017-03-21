@@ -1,12 +1,12 @@
 package minechem.potion;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class PotionCoatingSubscribe
 {
@@ -14,10 +14,10 @@ public class PotionCoatingSubscribe
     @SubscribeEvent
     public void entityAttacked(LivingAttackEvent event)
     {
-        if (event.source.getSourceOfDamage() instanceof EntityLivingBase)
+        if (event.getSource().getSourceOfDamage() instanceof EntityLivingBase)
         {
-            EntityLivingBase entity = (EntityLivingBase) event.source.getSourceOfDamage();
-            ItemStack weapon = entity.getHeldItem();
+            EntityLivingBase entity = (EntityLivingBase) event.getSource().getSourceOfDamage();
+            ItemStack weapon = entity.getActiveItemStack();
             if (weapon == null)
             {
                 return;
@@ -30,10 +30,10 @@ public class PotionCoatingSubscribe
             for (int i = 0; i < list.tagCount(); i++)
             {
                 NBTTagCompound enchantmentTag = list.getCompoundTagAt(i);
-                Enchantment enchant = Enchantment.enchantmentsList[enchantmentTag.getShort("id")];
+                Enchantment enchant = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
                 if (enchant instanceof PotionEnchantmentCoated)
                 {
-                    ((PotionEnchantmentCoated) enchant).applyEffect(event.entityLiving);
+                    ((PotionEnchantmentCoated) enchant).applyEffect(event.getEntityLiving());
                 }
             }
         }

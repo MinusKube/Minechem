@@ -1,13 +1,14 @@
 package minechem.network.message;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import minechem.item.blueprint.MinechemBlueprint;
 import minechem.tileentity.multiblock.ghostblock.GhostBlockTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class GhostBlockMessage implements IMessage, IMessageHandler<GhostBlockMessage, IMessage>
 {
@@ -21,9 +22,9 @@ public class GhostBlockMessage implements IMessage, IMessageHandler<GhostBlockMe
 
     public GhostBlockMessage(GhostBlockTileEntity tile)
     {
-        this.posX = tile.xCoord;
-        this.posY = tile.yCoord;
-        this.posZ = tile.zCoord;
+        this.posX = tile.getPos().getX();
+        this.posY = tile.getPos().getY();
+        this.posZ = tile.getPos().getZ();
 
         this.blueprintID = tile.getBlueprint().id;
         this.ghostblockID = tile.getBlockID();
@@ -54,7 +55,7 @@ public class GhostBlockMessage implements IMessage, IMessageHandler<GhostBlockMe
     @Override
     public IMessage onMessage(GhostBlockMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(message.posX, message.posY, message.posZ);
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof GhostBlockTileEntity)
         {
             ((GhostBlockTileEntity) tileEntity).setBlueprintAndID(MinechemBlueprint.blueprints.get(message.blueprintID), message.ghostblockID);

@@ -37,7 +37,7 @@ public class MinechemBucketRecipe implements IRecipe
                 continue;
             }
 
-            if (stack.getItem() == Items.bucket)
+            if (stack.getItem() == Items.BUCKET)
             {
                 if (hasBucket)
                 {
@@ -98,9 +98,9 @@ public class MinechemBucketRecipe implements IRecipe
 
             if (stack.getItem() == MinechemItemsRegistration.element || stack.getItem() == MinechemItemsRegistration.molecule)
             {
-                if (stack.stackTagCompound != null)
+                if (stack.getTagCompound() != null)
                 {
-                    long anotherTime = stack.stackTagCompound.getLong("decayStart");
+                    long anotherTime = stack.getTagCompound().getLong("decayStart");
                     if (anotherTime < time)
                     {
                         time = anotherTime;
@@ -120,7 +120,7 @@ public class MinechemBucketRecipe implements IRecipe
         comp.setLong("decayStart", time);
         comp.setLong("lastUpdate", time);
         comp.setInteger("dimensionID", 0);
-        result.stackTagCompound = comp;
+        result.setTagCompound(comp);
         return result;
     }
 
@@ -135,7 +135,7 @@ public class MinechemBucketRecipe implements IRecipe
     {
         if (type != null && type.getUnlocalizedName().equals("molecule.water"))
         {
-            return new ItemStack(Items.water_bucket);
+            return new ItemStack(Items.WATER_BUCKET);
         } else if (type != null)
         {
             MinechemBucketItem bucket = MinechemBucketHandler.getInstance().getBucket(type);
@@ -145,6 +145,11 @@ public class MinechemBucketRecipe implements IRecipe
             }
         }
         return null;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inventoryCrafting) {
+        return new ItemStack[0];
     }
 
 }

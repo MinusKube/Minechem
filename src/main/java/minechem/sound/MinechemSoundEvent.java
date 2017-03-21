@@ -1,7 +1,7 @@
 package minechem.sound;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class MinechemSoundEvent
 {

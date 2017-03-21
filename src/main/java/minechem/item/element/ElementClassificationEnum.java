@@ -1,7 +1,7 @@
 package minechem.item.element;
 
 import minechem.item.IDescriptiveName;
-import net.minecraft.util.StatCollector;
+import net.minecraft.client.resources.I18n;
 
 public enum ElementClassificationEnum implements IDescriptiveName
 {
@@ -23,7 +23,7 @@ public enum ElementClassificationEnum implements IDescriptiveName
     @Override
     public String descriptiveName()
     {
-        String localizedName = StatCollector.translateToLocal("element.classification." + descriptiveName);
+        String localizedName = I18n.format("element.classification." + descriptiveName);
         if (!localizedName.isEmpty() || !localizedName.equals("element.classification." + descriptiveName))
         {
             return localizedName;

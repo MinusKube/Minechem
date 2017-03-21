@@ -21,7 +21,7 @@ public class ChemistJournalRecipeCloning implements IRecipe
     {
         ItemStack itemstack1 = crafting.getStackInSlot(0);
         ItemStack itemstack2 = crafting.getStackInSlot(1);
-        return (itemstack1 != null && itemstack1.getItem() == MinechemItemsRegistration.journal) && (itemstack2 != null && itemstack2.getItem() == Items.book);
+        return (itemstack1 != null && itemstack1.getItem() == MinechemItemsRegistration.journal) && (itemstack2 != null && itemstack2.getItem() == Items.BOOK);
     }
 
     @Override
@@ -43,6 +43,11 @@ public class ChemistJournalRecipeCloning implements IRecipe
     public ItemStack getRecipeOutput()
     {
         return null;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inventoryCrafting) {
+        return new ItemStack[0];
     }
 
 }

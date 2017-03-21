@@ -35,7 +35,7 @@ public class PolytoolTypeGold extends PolytoolUpgradeType
     {
         if (!world.isRemote && world.rand.nextInt(35000) < power)
         {
-            world.addWeatherEffect(new EntityLightningBolt(world, entity.posX, entity.posY, entity.posZ));
+            world.addWeatherEffect(new EntityLightningBolt(world, entity.posX, entity.posY, entity.posZ, false));
             if (canCharge)
             {
                 if (entity instanceof EntityPlayer)

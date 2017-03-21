@@ -1,10 +1,5 @@
 package minechem.item.molecule;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.fluid.FluidHelper;
@@ -17,33 +12,43 @@ import minechem.potion.PharmacologyEffectRegistry;
 import minechem.radiation.RadiationEnum;
 import minechem.radiation.RadiationFluidTileEntity;
 import minechem.radiation.RadiationInfo;
-import minechem.reference.Textures;
 import minechem.utils.EnumColour;
 import minechem.utils.MinechemUtil;
 import minechem.utils.TimeHelper;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class MoleculeItem extends Item
 {
-    public IIcon render_pass1, render_pass2, filledMolecule;
 
     public MoleculeItem()
     {
@@ -58,15 +63,6 @@ public class MoleculeItem extends Item
         return MinechemUtil.getLocalString(getMolecule(itemStack).getUnlocalizedName(), true);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir)
-    {
-        itemIcon = ir.registerIcon(Textures.IIcon.FILLED_TESTTUBE);
-        render_pass1 = ir.registerIcon(Textures.IIcon.MOLECULE_PASS1);
-        render_pass2 = ir.registerIcon(Textures.IIcon.MOLECULE_PASS2);
-        filledMolecule = ir.registerIcon(Textures.IIcon.FILLED_MOLECULE);
-    }
 
     @Override
     public String getUnlocalizedName(ItemStack par1ItemStack)
@@ -93,7 +89,7 @@ public class MoleculeItem extends Item
         String timeLeft = "";
         if (RadiationInfo.getRadioactivity(itemstack) != RadiationEnum.stable && itemstack.getTagCompound() != null)
         {
-            long worldTime = player.worldObj.getTotalWorldTime();
+            long worldTime = player.world.getTotalWorldTime();
             timeLeft = TimeHelper.getTimeFromTicks(RadiationInfo.getRadioactivity(itemstack).getLife() - (worldTime - itemstack.getTagCompound().getLong("decayStart")));
         }
         list.add(radioactivityColor + radioactiveName + (timeLeft.equals("") ? "" : " (" + timeLeft + ")"));
@@ -134,9 +130,9 @@ public class MoleculeItem extends Item
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, EnumHand hand)
     {
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
         boolean result = !world.isRemote;
         if (te != null && te instanceof IFluidHandler && !player.isSneaking() && !(te instanceof IInventory))
         {
@@ -149,28 +145,28 @@ public class MoleculeItem extends Item
                     FluidMolecule fluid = FluidHelper.molecules.get(getMolecule(stack));
                     if (fluid == null)
                     {
-                        return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+                        return super.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand);
                     }
                     fluidStack = new FluidStack(fluid, 125);
 
                 }
-                filled = ((IFluidHandler) te).fill(ForgeDirection.getOrientation(i), fluidStack, false);
+                filled = ((IFluidHandler) te).fill(EnumFacing.values()[i], fluidStack, false);
                 if (filled > 0)
                 {
                     if (result)
                     {
-                        ((IFluidHandler) te).fill(ForgeDirection.getOrientation(i), fluidStack, true);
+                        ((IFluidHandler) te).fill(EnumFacing.values()[i], fluidStack, true);
                     }
                     if (!player.capabilities.isCreativeMode)
                     {
                         MinechemUtil.incPlayerInventory(stack, -1, player, new ItemStack(MinechemItemsRegistration.element, 1, 0));
                     }
-                    return result || stack.stackSize <= 0;
+                    return (result || stack.stackSize <= 0) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
                 }
             }
-            return result;
+            return result ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
-        return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+        return super.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand);
     }
 
     public static MoleculeEnum getMolecule(ItemStack itemstack)
@@ -191,7 +187,7 @@ public class MoleculeItem extends Item
     @Override
     public EnumAction getItemUseAction(ItemStack par1ItemStack)
     {
-        return EnumAction.drink;
+        return EnumAction.DRINK;
     }
 
     /**
@@ -203,9 +199,15 @@ public class MoleculeItem extends Item
         return 16;
     }
 
+
     @Override
-    public ItemStack onEaten(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    public ItemStack onItemUseFinish(ItemStack itemStack, World world, EntityLivingBase entity)
     {
+        if(!(entity instanceof EntityPlayer))
+            return itemStack;
+
+        EntityPlayer entityPlayer = (EntityPlayer) entity;
+
         if (!entityPlayer.capabilities.isCreativeMode)
         {
             --itemStack.stackSize;
@@ -219,56 +221,58 @@ public class MoleculeItem extends Item
 
         MoleculeEnum molecule = getMolecule(itemStack);
         PharmacologyEffectRegistry.applyEffect(molecule, entityPlayer);
-        world.playSoundAtEntity(entityPlayer, "random.burp", 0.5F, world.rand.nextFloat() * 0.1F + 0.9F); // Thanks mDiyo!
+        world.playSound(entityPlayer, entityPlayer.getPosition(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, world.rand.nextFloat() * 0.1F + 0.9F); // Thanks mDiyo!
         return itemStack;
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand)
     {
-        player.setItemInUse(itemStack, getMaxItemUseDuration(itemStack));
+        player.setActiveHand(hand);
 
-        MovingObjectPosition movingObjectPosition = this.getMovingObjectPositionFromPlayer(world, player, false);
-        if (movingObjectPosition == null || player.isSneaking())
+        RayTraceResult rayTrace = this.rayTrace(world, player, false);
+        if (rayTrace == null || player.isSneaking())
         {
-            return itemStack;
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
         }
 
-        if (movingObjectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK
+        if (rayTrace.typeOfHit == RayTraceResult.Type.BLOCK
         		&& Settings.vialPlacing)
         {
-            int blockX = movingObjectPosition.blockX;
-            int blockY = movingObjectPosition.blockY;
-            int blockZ = movingObjectPosition.blockZ;
+            int blockX = rayTrace.getBlockPos().getX();
+            int blockY = rayTrace.getBlockPos().getY();
+            int blockZ = rayTrace.getBlockPos().getZ();
 
-            ForgeDirection dir = ForgeDirection.getOrientation(movingObjectPosition.sideHit);
-            blockX += dir.offsetX;
-            blockY += dir.offsetY;
-            blockZ += dir.offsetZ;
+            EnumFacing dir = rayTrace.sideHit;
+            blockX += dir.getFrontOffsetX();
+            blockY += dir.getFrontOffsetY();
+            blockZ += dir.getFrontOffsetZ();
 
-            if (!player.canPlayerEdit(blockX, blockY, blockZ, movingObjectPosition.sideHit, itemStack))
+            if (!player.canPlayerEdit(rayTrace.getBlockPos(), rayTrace.sideHit, itemStack))
             {
-                return itemStack;
+                return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
             }
 
-            return emptyTube(itemStack, player, world, blockX, blockY, blockZ);
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, emptyTube(itemStack, player, world, blockX, blockY, blockZ));
         }
 
-        return itemStack;
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStack);
     }
 
     private ItemStack emptyTube(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z)
     {
-        if (!world.isAirBlock(x, y, z) && !world.getBlock(x, y, z).getMaterial().isSolid())
+        BlockPos pos = new BlockPos(x, y, z);
+
+        if (!world.isAirBlock(pos) && !world.getBlockState(pos).getMaterial().isSolid())
         {
-            Block sourceBlock = world.getBlock(x, y, z);
-            int metadata = world.getBlockMetadata(x, y, z);
-            sourceBlock.harvestBlock(world, player, x, y, z, metadata);
-            sourceBlock.breakBlock(world, x, y, z, sourceBlock, metadata);
-            world.setBlockToAir(x, y, z);
+            IBlockState state = world.getBlockState(pos);
+
+            state.getBlock().harvestBlock(world, player, pos, state, null, null);
+            state.getBlock().breakBlock(world, pos, state);
+            world.setBlockToAir(pos);
         }
 
-        if (world.isAirBlock(x, y, z))
+        if (world.isAirBlock(pos))
         {
             RadiationInfo radioactivity = ElementItem.getRadiationInfo(itemStack, world);
             long worldtime = world.getTotalWorldTime();
@@ -339,13 +343,13 @@ public class MoleculeItem extends Item
                 MinechemUtil.throwItemStack(world, empties, x, y, z);
             }
 
-            Block block = Blocks.flowing_water;
+            Block block = Blocks.FLOWING_WATER;
             if (getMolecule(itemStack) != MoleculeEnum.water)
             {
                 block = FluidHelper.moleculeBlocks.get(fluid);
             }
-            world.setBlock(x, y, z, block, 0, 3);
-            TileEntity tile = world.getTileEntity(x, y, z);
+            world.setBlockState(pos, block.getStateFromMeta(0), 3);
+            TileEntity tile = world.getTileEntity(pos);
             if (radioactivity.isRadioactive() && tile instanceof RadiationFluidTileEntity)
             {
                 ((RadiationFluidTileEntity) tile).info = radioactivity;
@@ -364,9 +368,9 @@ public class MoleculeItem extends Item
     public void onCreated(ItemStack itemStack, World world, EntityPlayer player)
     {
         super.onCreated(itemStack, world, player);
-        if (RadiationInfo.getRadioactivity(itemStack) != RadiationEnum.stable && itemStack.stackTagCompound == null)
+        if (RadiationInfo.getRadioactivity(itemStack) != RadiationEnum.stable && itemStack.getTagCompound() == null)
         {
-            RadiationInfo.setRadiationInfo(new RadiationInfo(itemStack, world.getTotalWorldTime(), world.getTotalWorldTime(), world.provider.dimensionId, RadiationInfo.getRadioactivity(itemStack)), itemStack);
+            RadiationInfo.setRadiationInfo(new RadiationInfo(itemStack, world.getTotalWorldTime(), world.getTotalWorldTime(), world.provider.getDimension(), RadiationInfo.getRadioactivity(itemStack)), itemStack);
         }
     }
 }

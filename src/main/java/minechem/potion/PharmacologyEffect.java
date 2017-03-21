@@ -1,6 +1,5 @@
 package minechem.potion;
 
-import java.util.ArrayList;
 import minechem.utils.Constants;
 import minechem.utils.EnumColour;
 import minechem.utils.MinechemUtil;
@@ -9,6 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+
+import java.util.ArrayList;
 
 public abstract class PharmacologyEffect
 {
@@ -107,45 +108,45 @@ public abstract class PharmacologyEffect
 
     public static class Cure extends PharmacologyEffect
     {
-        private int potionId;
+        private net.minecraft.potion.Potion potion;
 
         public Cure()
         {
-            this(-1);
+            this((net.minecraft.potion.Potion) null);
         }
 
-        public Cure(int potionId)
+        public Cure(net.minecraft.potion.Potion potion)
         {
             super(EnumColour.AQUA);
-            this.potionId = potionId;
+            this.potion = potion;
         }
 
         public Cure(String potionName)
         {
-            this(PotionHelper.getPotionByName(potionName).getId());
+            this(PotionHelper.getPotionByName(potionName));
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public void applyEffect(EntityLivingBase entityLivingBase)
         {
-            if (potionId == -1)
+            if (potion == null)
             {
                 for (PotionEffect potionEffect : new ArrayList<PotionEffect>(entityLivingBase.getActivePotionEffects()))
                 {
                     if (potionEffect.getCurativeItems().size() > 0)
-                        entityLivingBase.removePotionEffect(potionEffect.getPotionID());
+                        entityLivingBase.removePotionEffect(potionEffect.getPotion());
                 }
             } else
             {
-                entityLivingBase.removePotionEffect(potionId);
+                entityLivingBase.removePotionEffect(potion);
             }
         }
 
         @Override
         public String toString()
         {
-            return "Cure Effect: " + (potionId == -1 ? "all" : MinechemUtil.getLocalString(PotionHelper.getPotionNameById(potionId)));
+            return "Cure Effect: " + (potion == null ? "all" : MinechemUtil.getLocalString(potion.getName()));
         }
 
         @Override
@@ -154,7 +155,7 @@ public abstract class PharmacologyEffect
             if (obj instanceof Cure)
             {
                 Cure other = (Cure) obj;
-                if (other.potionId == this.potionId)
+                if (other.potion == this.potion)
                 {
                     return true;
                 }
@@ -205,11 +206,11 @@ public abstract class PharmacologyEffect
     {
         private int duration;
         private int power;
-        private int potionId;
+        private net.minecraft.potion.Potion potion;
 
         public Potion(String potionName, int power, int duration)
         {
-            this(PotionHelper.getPotionByName(potionName).getId(), power, duration);
+            this(PotionHelper.getPotionByName(potionName), power, duration);
         }
 
         public Potion(String potionName, int duration)
@@ -217,29 +218,29 @@ public abstract class PharmacologyEffect
             this(potionName, 0, duration);
         }
 
-        public Potion(int potionId, int duration)
+        public Potion(net.minecraft.potion.Potion potion, int duration)
         {
-            this(potionId, 0, duration);
+            this(potion, 0, duration);
         }
 
-        public Potion(int potionId, int power, int duration)
+        public Potion(net.minecraft.potion.Potion potion, int power, int duration)
         {
             super(EnumColour.PURPLE);
             this.duration = duration;
-            this.potionId = potionId;
+            this.potion = potion;
             this.power = power;
         }
 
         @Override
         public void applyEffect(EntityLivingBase entityLivingBase)
         {
-            entityLivingBase.addPotionEffect(new PotionEffect(potionId, duration * Constants.TICKS_PER_SECOND, power));
+            entityLivingBase.addPotionEffect(new PotionEffect(potion, duration * Constants.TICKS_PER_SECOND, power));
         }
 
         @Override
         public String toString()
         {
-            return "Potion Effect: " + MinechemUtil.getLocalString(PotionHelper.getPotionNameById(potionId)) + ", Duration: " + duration + ", Power: " + power;
+            return "Potion Effect: " + MinechemUtil.getLocalString(potion.getName()) + ", Duration: " + duration + ", Power: " + power;
         }
 
         @Override
@@ -248,7 +249,7 @@ public abstract class PharmacologyEffect
             if (obj instanceof Potion)
             {
                 Potion other = (Potion) obj;
-                if (other.duration == this.duration && other.potionId == this.potionId && other.power == this.power)
+                if (other.duration == this.duration && other.potion == this.potion && other.power == this.power)
                 {
                     return true;
                 }

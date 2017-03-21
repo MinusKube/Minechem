@@ -62,7 +62,7 @@ public class PotionSpikingRecipe implements IRecipe
                     {
                         ItemStack result = foodItem.copy();
                         result.stackSize = 1;
-                        if (result.stackTagCompound == null) // empty NBT
+                        if (result.getTagCompound() == null) // empty NBT
                         {
                             NBTTagCompound tagCompound = new NBTTagCompound();
                             tagCompound.setBoolean("minechem.isPoisoned", true);
@@ -71,17 +71,17 @@ public class PotionSpikingRecipe implements IRecipe
                                 MoleculeItem.getMolecule(moleculeStack).id()
                             });
                             result.setTagCompound(tagCompound);
-                        } else if (result.stackTagCompound.hasKey("minechem.isPoisoned")) // has been poisoned before
+                        } else if (result.getTagCompound().hasKey("minechem.isPoisoned")) // has been poisoned before
                         {
-                            int[] arrayOld = result.stackTagCompound.getIntArray("minechem.effectTypes");
+                            int[] arrayOld = result.getTagCompound().getIntArray("minechem.effectTypes");
                             int[] arrayNew = new int[arrayOld.length + 1];
                             System.arraycopy(arrayOld, 0, arrayNew, 0, arrayOld.length);
                             arrayNew[arrayOld.length] = MoleculeItem.getMolecule(moleculeStack).id();
-                            result.stackTagCompound.setIntArray("minechem.effectTypes", arrayNew);
+                            result.getTagCompound().setIntArray("minechem.effectTypes", arrayNew);
                         } else // has NBT but no poison
                         {
-                            result.stackTagCompound.setBoolean("minechem.isPoisoned", true);
-                            result.stackTagCompound.setIntArray("minechem.effectTypes", new int[]
+                            result.getTagCompound().setBoolean("minechem.isPoisoned", true);
+                            result.getTagCompound().setIntArray("minechem.effectTypes", new int[]
                             {
                                 MoleculeItem.getMolecule(moleculeStack).id()
                             });
@@ -106,4 +106,10 @@ public class PotionSpikingRecipe implements IRecipe
     {
         return result;
     }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inventoryCrafting) {
+        return new ItemStack[0];
+    }
+
 }

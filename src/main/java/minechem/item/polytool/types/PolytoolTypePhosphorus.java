@@ -6,17 +6,18 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class PolytoolTypePhosphorus extends PolytoolUpgradeType
 {
     @Override
     public void onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase target)
     {
-        if (!target.worldObj.isRemote)
+        if (!target.world.isRemote)
         {
-            if (block.isFlammable(world, x, y, z, ForgeDirection.UP))
+            if (block.isFlammable(world, new BlockPos(x, y, z), EnumFacing.UP))
             {
                 for (int i = (int)(x - power); i < x + power; i++)
                 {
@@ -24,9 +25,9 @@ public class PolytoolTypePhosphorus extends PolytoolUpgradeType
                     {
                         for (int k = (int)(z - power); k < z + power; k++)
                         {
-                            if (world.getBlock(i, j, k) == Blocks.air)
+                            if (world.getBlockState(new BlockPos(i, j, k)).getBlock() == Blocks.AIR)
                             {
-                                world.setBlock(i, j, k, Blocks.fire);
+                                world.setBlockState(new BlockPos(i, j, k), Blocks.FIRE.getDefaultState());
                             }
                         }
                     }

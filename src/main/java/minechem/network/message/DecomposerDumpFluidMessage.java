@@ -1,13 +1,13 @@
 package minechem.network.message;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import minechem.tileentity.decomposer.DecomposerTileEntity;
-import minechem.tileentity.synthesis.SynthesisTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class DecomposerDumpFluidMessage implements IMessage, IMessageHandler<DecomposerDumpFluidMessage, IMessage>
 {
@@ -18,9 +18,9 @@ public class DecomposerDumpFluidMessage implements IMessage, IMessageHandler<Dec
 
     public DecomposerDumpFluidMessage(DecomposerTileEntity tile)
     {
-        this.posX = tile.xCoord;
-        this.posY = tile.yCoord;
-        this.posZ = tile.zCoord;
+        this.posX = tile.getPos().getX();
+        this.posY = tile.getPos().getY();
+        this.posZ = tile.getPos().getZ();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DecomposerDumpFluidMessage implements IMessage, IMessageHandler<Dec
     @Override
     public IMessage onMessage(DecomposerDumpFluidMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTileEntity(message.posX, message.posY, message.posZ);
+        TileEntity tileEntity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof DecomposerTileEntity)
         {
             ((DecomposerTileEntity) tileEntity).dumpFluid();

@@ -1,13 +1,16 @@
 package minechem.potion;
 
-import java.util.HashMap;
 import minechem.item.molecule.MoleculeEnum;
 import minechem.utils.MinechemUtil;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class PotionEnchantmentCoated extends Enchantment
 {
@@ -17,7 +20,7 @@ public class PotionEnchantmentCoated extends Enchantment
 
     protected PotionEnchantmentCoated(MoleculeEnum chem, int id)
     {
-        super(id, 0, EnumEnchantmentType.weapon);
+        super(Rarity.COMMON, EnumEnchantmentType.WEAPON, EntityEquipmentSlot.values());
         this.chemical = chem;
         this.setName(chem.getUnlocalizedName() + ".coated");
         PotionEnchantmentCoated.chemLookup.put(chem, this);
@@ -67,10 +70,10 @@ public class PotionEnchantmentCoated extends Enchantment
     @Override
     public String getTranslatedName(int level)
     {
-        String enchantedName = StatCollector.translateToLocal("enchantment.level." + level);
-        if (StatCollector.canTranslate("minechem.enchantment.coated"))
+        String enchantedName = I18n.format("enchantment.level." + level);
+        if (I18n.hasKey("minechem.enchantment.coated"))
         {
-            return MinechemUtil.getLocalString(chemical.getUnlocalizedName()) + " " + StatCollector.translateToLocalFormatted("minechem.enchantment.coated", enchantedName);
+            return MinechemUtil.getLocalString(chemical.getUnlocalizedName()) + " " + I18n.format("minechem.enchantment.coated", enchantedName);
         } else
         {
             return MinechemUtil.getLocalString(chemical.getUnlocalizedName()) + " " + enchantedName + " Coated";
@@ -83,12 +86,12 @@ public class PotionEnchantmentCoated extends Enchantment
         {
             if (molecule != null && PharmacologyEffectRegistry.hasEffect(molecule))
             {
-                for (int i = 0; i < Enchantment.enchantmentsList.length; i++)
+                for (Iterator<Enchantment> iter = Enchantment.REGISTRY.iterator(); iter.hasNext(); )
                 {
-                    if (Enchantment.enchantmentsList[i] == null)
-                    {
+                    Enchantment ench = iter.next();
 
-                        new PotionEnchantmentCoated(molecule, i);
+                    if(ench != null) {
+                        new PotionEnchantmentCoated(molecule, Enchantment.getEnchantmentID(ench));
                         break;
                     }
                 }

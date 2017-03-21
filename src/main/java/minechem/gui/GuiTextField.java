@@ -20,7 +20,7 @@ public class GuiTextField extends Gui
         this.xSize = width;
         this.ySize = height;
         this.text = "";
-        this.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        this.fontRenderer = Minecraft.getMinecraft().fontRendererObj;
     }
 
     private void setText(String text)

@@ -1,6 +1,6 @@
 package minechem.utils;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class LocalPosition extends Position
 {
@@ -14,7 +14,7 @@ public class LocalPosition extends Position
         public int z;
     }
 
-    public LocalPosition(double x, double y, double z, ForgeDirection orientation)
+    public LocalPosition(double x, double y, double z, EnumFacing orientation)
     {
         super(x, y, z, orientation);
         this.multiplier = DirectionMultiplier.map.get(orientation);
@@ -39,7 +39,7 @@ public class LocalPosition extends Position
     {
         Pos3 pos = new Pos3();
         pos.y = getLocalY(y);
-        if (this.orientation == ForgeDirection.SOUTH || this.orientation == ForgeDirection.NORTH)
+        if (this.orientation == EnumFacing.SOUTH || this.orientation == EnumFacing.NORTH)
         {
             pos.x = getLocalX(z);
             pos.z = getLocalZ(x);

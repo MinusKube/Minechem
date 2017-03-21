@@ -1,9 +1,5 @@
 package minechem.tileentity.decomposer;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import java.util.ArrayList;
 import minechem.Settings;
 import minechem.api.IDecomposerControl;
 import minechem.network.MessageHandler;
@@ -28,6 +24,11 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
 
 public class DecomposerTileEntity extends MinechemTileEntityElectric implements ISidedInventory, IFluidHandler
 {

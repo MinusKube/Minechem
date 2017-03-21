@@ -15,7 +15,7 @@ public class PolytoolTypeRubidium extends PolytoolUpgradeType
     {
         if (target.isInWater())
         {
-            target.worldObj.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
+            target.world.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
         }
     }
 
@@ -24,7 +24,7 @@ public class PolytoolTypeRubidium extends PolytoolUpgradeType
     {
         if (target.isInWater())
         {
-            target.worldObj.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
+            target.world.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
         }
     }
 

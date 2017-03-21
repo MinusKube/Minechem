@@ -1,8 +1,5 @@
 package minechem.tileentity.decomposer;
 
-import java.util.ArrayList;
-
-import cpw.mods.fml.common.network.NetworkRegistry;
 import minechem.Minechem;
 import minechem.Settings;
 import minechem.block.BlockSimpleContainer;
@@ -10,45 +7,54 @@ import minechem.gui.CreativeTabMinechem;
 import minechem.network.MessageHandler;
 import minechem.network.message.DecomposerUpdateMessage;
 import minechem.proxy.CommonProxy;
-import minechem.reference.Textures;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class DecomposerBlock extends BlockSimpleContainer
 {
     public DecomposerBlock()
     {
-        super(Material.iron);
-        setBlockName("chemicalDecomposer");
+        super(Material.IRON);
+        setRegistryName("chemicalDecomposer");
+        setUnlocalizedName("chemicalDecomposer");
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
-    {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity == null || entityPlayer.isSneaking())
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+                                    EnumHand hand, @Nullable ItemStack itemStack, EnumFacing facing, float par8, float par9, float par10) {
+
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity == null || player.isSneaking())
         {
             return false;
         }
         if (!world.isRemote)
         {
             DecomposerUpdateMessage message = new DecomposerUpdateMessage((DecomposerTileEntity)tileEntity);
-            if (entityPlayer instanceof EntityPlayerMP)
+            if (player instanceof EntityPlayerMP)
             {
-                MessageHandler.INSTANCE.sendTo(message, (EntityPlayerMP) entityPlayer);
+                MessageHandler.INSTANCE.sendTo(message, (EntityPlayerMP) player);
             } else
             {
-                MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.dimensionId, x, y, z, Settings.UpdateRadius));
+                MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
             }
         }
-        entityPlayer.openGui(Minechem.INSTANCE, 0, world, x, y, z);
+
+        player.openGui(Minechem.INSTANCE, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 
@@ -74,32 +80,14 @@ public class DecomposerBlock extends BlockSimpleContainer
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister ir)
+    public EnumBlockRenderType getRenderType(IBlockState state)
     {
-        this.blockIcon = ir.registerIcon(Textures.IIcon.DECOMPOSER);
+        return EnumBlockRenderType.values()[CommonProxy.RENDER_ID];
     }
 
     @Override
-    public IIcon getIcon(int side, int meta)
-    {
-        return this.blockIcon;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock()
-    {
+    public boolean isOpaqueCube(IBlockState p_isOpaqueCube_1_) {
         return false;
     }
 
-    @Override
-    public int getRenderType()
-    {
-        return CommonProxy.RENDER_ID;
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
 }

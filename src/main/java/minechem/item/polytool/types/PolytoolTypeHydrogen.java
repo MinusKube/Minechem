@@ -12,9 +12,9 @@ public class PolytoolTypeHydrogen extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        if (!target.worldObj.isRemote && target instanceof EntityLiving && target.isBurning())
+        if (!target.world.isRemote && target instanceof EntityLiving && target.isBurning())
         {
-            target.worldObj.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
+            target.world.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
         }
     }
 

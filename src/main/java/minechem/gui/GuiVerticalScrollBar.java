@@ -1,9 +1,9 @@
 package minechem.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import minechem.reference.Resources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 

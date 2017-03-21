@@ -1,13 +1,14 @@
 package minechem.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import java.util.HashMap;
 import minechem.utils.MinechemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
+
+import java.util.HashMap;
 
 public abstract class GuiToggleSwitch
 {
@@ -45,7 +46,7 @@ public abstract class GuiToggleSwitch
         String tooltip = MinechemUtil.getLocalString(button.tooltip);
         int cx = (container.width - container.getXSize()) / 2;
         int cy = (container.height - container.getYSize()) / 2;
-        int tooltipWidth = mc.fontRenderer.getStringWidth(tooltip);
+        int tooltipWidth = mc.fontRendererObj.getStringWidth(tooltip);
 
         if (isMoverOver())
         {
@@ -97,12 +98,12 @@ public abstract class GuiToggleSwitch
     {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
-        Tessellator var9 = Tessellator.instance;
-        var9.startDrawingQuads();
+        Tessellator var9 = Tessellator.getInstance();
+        /*var9.startDrawingQuads();
         var9.addVertexWithUV(par1 + 0, par2 + par6, this.zLevel, (par3 + 0) * var7, (par4 + par6) * var8);
         var9.addVertexWithUV(par1 + par5, par2 + par6, this.zLevel, (par3 + par5) * var7, (par4 + par6) * var8);
         var9.addVertexWithUV(par1 + par5, par2 + 0, this.zLevel, (par3 + par5) * var7, (par4 + 0) * var8);
-        var9.addVertexWithUV(par1 + 0, par2 + 0, this.zLevel, (par3 + 0) * var7, (par4 + 0) * var8);
+        var9.addVertexWithUV(par1 + 0, par2 + 0, this.zLevel, (par3 + 0) * var7, (par4 + 0) * var8);*/
         var9.draw();
     }
 

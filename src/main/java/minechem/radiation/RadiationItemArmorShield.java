@@ -1,16 +1,17 @@
 package minechem.radiation;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
 import minechem.api.IRadiationShield;
 import minechem.gui.CreativeTabMinechem;
 import minechem.reference.Textures;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class RadiationItemArmorShield extends ItemArmor implements IRadiationShield
 {
@@ -20,18 +21,11 @@ public class RadiationItemArmorShield extends ItemArmor implements IRadiationShi
 
     public RadiationItemArmorShield(int id, int part, float radiationShieldFactor, String texture)
     {
-        super(ArmorMaterial.CHAIN, 2, part);
+        super(ArmorMaterial.CHAIN, 2, EntityEquipmentSlot.values()[part]);
         this.radiationShieldFactor = radiationShieldFactor;
         this.setUnlocalizedName("itemArmorRadiationShield");
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
         textureFile = texture;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir)
-    {
-        itemIcon = ir.registerIcon(textureFile);
     }
 
     @Override
@@ -51,7 +45,7 @@ public class RadiationItemArmorShield extends ItemArmor implements IRadiationShi
     }
 
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
+    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
     {
         return Textures.Model.HAZMAT;
     }

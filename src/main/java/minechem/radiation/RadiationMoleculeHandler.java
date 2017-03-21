@@ -1,7 +1,5 @@
 package minechem.radiation;
 
-import java.util.*;
-
 import minechem.MinechemItemsRegistration;
 import minechem.fluid.FluidHelper;
 import minechem.item.bucket.MinechemBucketHandler;
@@ -18,6 +16,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class RadiationMoleculeHandler
 {
@@ -64,13 +70,13 @@ public class RadiationMoleculeHandler
         Item item = items[0].getItem();
         if (item instanceof MoleculeItem)
         {
-            itemStack.func_150996_a(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.moleculeBlocks.get(FluidHelper.molecules.get(MoleculeItem.getMolecule(items[0])))));
+            itemStack.setItem(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.moleculeBlocks.get(FluidHelper.molecules.get(MoleculeItem.getMolecule(items[0])))));
         } else if (item instanceof ElementItem)
         {
-            itemStack.func_150996_a(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.elementsBlocks.get(FluidHelper.elements.get(ElementItem.getElement(items[0])))));
+            itemStack.setItem(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.elementsBlocks.get(FluidHelper.elements.get(ElementItem.getElement(items[0])))));
         }
         itemStack.stackSize = (items[0].stackSize / 8);
-        itemStack.setTagCompound(items[0].stackTagCompound);
+        itemStack.setTagCompound(items[0].getTagCompound());
 
         return ElementItem.initiateRadioactivity(itemStack, world);
     }
@@ -93,9 +99,9 @@ public class RadiationMoleculeHandler
         }
 
         itemStack.setItemDamage(items[0].getItemDamage());
-        itemStack.func_150996_a(items[0].getItem());
+        itemStack.setItem(items[0].getItem());
         itemStack.stackSize = (items[0].stackSize);
-        itemStack.setTagCompound(items[0].stackTagCompound);
+        itemStack.setTagCompound(items[0].getTagCompound());
 
         return ElementItem.initiateRadioactivity(itemStack, world);
     }

@@ -9,7 +9,6 @@ import minechem.item.bucket.MinechemBucketItem;
 import minechem.tick.ScheduledTickHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -46,7 +45,7 @@ public class CommonProxy
     {
 
         EntityPlayer player;
-        player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(name);
+        player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
 
         if (player != null)
         {

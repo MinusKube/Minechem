@@ -1,10 +1,5 @@
 package minechem.radiation;
 
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import dan200.computercraft.api.turtle.ITurtleAccess;
-import java.util.ArrayList;
-import java.util.List;
 import minechem.MinechemItemsRegistration;
 import minechem.api.INoDecay;
 import minechem.api.IRadiationShield;
@@ -22,10 +17,14 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RadiationHandler
 {
@@ -70,9 +69,9 @@ public class RadiationHandler
             {
                 if (itemstack != null && (itemstack.getItem() == MinechemItemsRegistration.molecule || itemstack.getItem() == MinechemItemsRegistration.element || itemstack.getItem() instanceof MinechemBucketItem) && RadiationInfo.getRadioactivity(itemstack) != RadiationEnum.stable)
                 {
-                    RadiationInfo radiationInfo = ElementItem.getRadiationInfo(itemstack, player.worldObj);
-                    radiationInfo.decayStarted += player.worldObj.getTotalWorldTime() - radiationInfo.lastDecayUpdate;
-                    radiationInfo.lastDecayUpdate = player.worldObj.getTotalWorldTime();
+                    RadiationInfo radiationInfo = ElementItem.getRadiationInfo(itemstack, player.world);
+                    radiationInfo.decayStarted += player.world.getTotalWorldTime() - radiationInfo.lastDecayUpdate;
+                    radiationInfo.lastDecayUpdate = player.world.getTotalWorldTime();
                     RadiationInfo.setRadiationInfo(radiationInfo, itemstack);
                 }
             }
@@ -80,21 +79,15 @@ public class RadiationHandler
         List<ItemStack> playerStacks = container.getPlayerInventory();
         if (playerStacks != null)
         {
-            updateRadiationOnItems(player.worldObj, player, openContainer, inventory, playerStacks);
+            updateRadiationOnItems(player.world, player, openContainer, inventory, playerStacks);
         }
     }
 
-    @Optional.Method(modid = "ComputerCraft")
-    public void updateRadiationOnItems(World world, ITurtleAccess turtle, IInventory inventory, List<ItemStack> itemstacks)
-    {
-        updateRadiationOnItems(world, inventory, itemstacks, null, null, turtle.getPosition().posX, turtle.getPosition().posY, turtle.getPosition().posZ);
-
-    }
 
     private void updateContainer(EntityPlayer player, Container container, IInventory inventory)
     {
         List<ItemStack> itemstacks = container.getInventory();
-        updateRadiationOnItems(player.worldObj, player, container, inventory, itemstacks);
+        updateRadiationOnItems(player.world, player, container, inventory, itemstacks);
     }
 
     private void updateRadiationOnItems(World world, EntityPlayer player, Container container, IInventory inventory, List<ItemStack> itemstacks)
@@ -180,7 +173,7 @@ public class RadiationHandler
             String nameAfterDecay = getLongName(e.getAfter());
             String time = TimeHelper.getTimeFromTicks(e.getTime());
             String message = String.format("Radiation Warning: Element %s decayed into %s after %s.", nameBeforeDecay, nameAfterDecay, time);
-            e.getPlayer().addChatMessage(new ChatComponentText(message));
+            e.getPlayer().sendMessage(new TextComponentString(message));
         }
     }
 
@@ -200,7 +193,7 @@ public class RadiationHandler
     private int updateRadiation(World world, ItemStack element, IInventory inventory, double x, double y, double z)
     {
         RadiationInfo radiationInfo = ElementItem.getRadiationInfo(element, world);
-        int dimensionID = world.provider.dimensionId;
+        int dimensionID = world.provider.getDimension();
         if (dimensionID != radiationInfo.dimensionID && radiationInfo.isRadioactive())
         {
             radiationInfo.dimensionID = dimensionID;
@@ -239,7 +232,7 @@ public class RadiationHandler
                 MinechemChemicalType type = ((MinechemBucketItem) item).chemical;
                 if (type instanceof ElementEnum)
                 {
-                    element.func_150996_a(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.elementsBlocks.get(FluidHelper.elements.get(ElementEnum.getByID(((ElementEnum) type).atomicNumber())))));
+                    element.setItem(MinechemBucketHandler.getInstance().buckets.get(FluidHelper.elementsBlocks.get(FluidHelper.elements.get(ElementEnum.getByID(((ElementEnum) type).atomicNumber())))));
                     radiationInfo = ElementItem.initiateRadioactivity(element, world);
                 } else
                 {
