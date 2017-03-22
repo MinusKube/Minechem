@@ -229,13 +229,15 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         nbtTagCompound.setInteger("fusedResult", fusedResult);
         nbtTagCompound.setBoolean("canProcess", canProcess);
         NBTTagList inventoryTagList = MinechemUtil.writeItemStackArrayToTagList(inventory);
         nbtTagCompound.setTag("inventory", inventoryTagList);
+
+        return nbtTagCompound;
     }
 
     @Override

@@ -175,11 +175,13 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         NBTTagList inventoryTagList = MinechemUtil.writeItemStackArrayToTagList(inventory);
         nbtTagCompound.setTag("inventory", inventoryTagList);
+
+        return nbtTagCompound;
     }
 
     @Override

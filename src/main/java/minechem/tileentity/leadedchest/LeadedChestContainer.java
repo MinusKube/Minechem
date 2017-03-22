@@ -1,13 +1,14 @@
 package minechem.tileentity.leadedchest;
 
-import java.util.ArrayList;
-import java.util.List;
 import minechem.api.INoDecay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LeadedChestContainer extends Container implements INoDecay
 {
@@ -37,7 +38,7 @@ public class LeadedChestContainer extends Container implements INoDecay
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer)
     {
-        return this.leadedchest.isUseableByPlayer(entityplayer);
+        return this.leadedchest.isUsableByPlayer(entityplayer);
     }
 
     private void bindPlayerInventory(InventoryPlayer inventoryPlayer)
