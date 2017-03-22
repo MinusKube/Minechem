@@ -13,6 +13,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nullable;
+
 public class MicroscopeTileEntity extends MinechemTileEntity implements IInventory
 {
     public static int[] kInput =
@@ -42,7 +44,7 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
         DecomposerRecipe decomposerRecipe = DecomposerRecipeHandler.instance.getRecipe(itemstack);
         if (inventory[1] != null && (synthesisRecipe != null || decomposerRecipe != null))
         {
-            MinechemItemsRegistration.journal.addItemStackToJournal(itemstack, inventory[1], worldObj);
+            MinechemItemsRegistration.journal.addItemStackToJournal(itemstack, inventory[1], world);
         }
     }
 
@@ -73,9 +75,9 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
         }
     }
 
+    @Nullable
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
+    public ItemStack removeStackFromSlot(int i) {
         return null;
     }
 
@@ -83,24 +85,24 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
     public void setInventorySlotContents(int slot, ItemStack itemStack)
     {
         inventory[slot] = itemStack;
-        if (slot == 0 && itemStack != null && !worldObj.isRemote)
+        if (slot == 0 && itemStack != null && !world.isRemote)
         {
             onInspectItemStack(itemStack);
         }
-        if (slot == 1 && itemStack != null && inventory[0] != null && !worldObj.isRemote)
+        if (slot == 1 && itemStack != null && inventory[0] != null && !world.isRemote)
         {
             onInspectItemStack(inventory[0]);
         }
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.microscope";
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -112,29 +114,29 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
     {
-        double dist = entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D);
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false : dist <= 64.0D;
+        double dist = entityPlayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+        return world.getTileEntity(pos) != this ? false : dist <= 64.0D;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
     }
 
     public int getFacing()
     {
-        return worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        return world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         ItemStack inpectingStack = inventory[0];
@@ -149,6 +151,8 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
             NBTTagCompound journalTag = journal.writeToNBT(new NBTTagCompound());
             nbtTagCompound.setTag("journal", journalTag);
         }
+
+        return nbtTagCompound;
     }
 
     @Override
@@ -167,5 +171,25 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
     public boolean isItemValidForSlot(int i, ItemStack itemstack)
     {
         return i == kInput[0] || (i == kJournal[0] && itemstack.getItem() == MinechemItemsRegistration.journal);
+    }
+
+    @Override
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
     }
 }

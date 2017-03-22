@@ -1,6 +1,5 @@
 package minechem.tileentity.multiblock.fusion;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.item.blueprint.BlueprintFusion;
@@ -15,7 +14,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInventory
 {
@@ -33,13 +36,13 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack itemstack, int side)
+    public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
         return false;
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemstack, int side)
+    public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
         return false;
     }
@@ -59,9 +62,9 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side)
+    public int[] getSlotsForFace(EnumFacing facing)
     {
-        switch(side/2)
+        switch(facing.getIndex() /2)
         {
             case 0:
                 return new int[]{output};
@@ -74,7 +77,7 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.minechemFusion";
     }
@@ -83,6 +86,12 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     public int getSizeInventory()
     {
         return 4;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack removeStackFromSlot(int i) {
+        return null;
     }
 
     public boolean inputsCanBeFused()
@@ -115,17 +124,37 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
     {
         return completeStructure;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer entityPlayer)
     {}
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer entityPlayer)
     {}
 
     @Override
@@ -151,20 +180,20 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
         if (!completeStructure)
         {
             return;
         }
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             if (!canProcess)
             {
@@ -183,7 +212,7 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
                 fusedResult = 0;
             }
             FusionUpdateMessage message = new FusionUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -217,5 +246,25 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
             return (inventory[inputLeft].getItemDamage() + inventory[inputRight].getItemDamage()) * Settings.fusionMultiplier;
         }
         return 0;
+    }
+
+    @Override
+    public int receiveEnergy(EnumFacing enumFacing, int i, boolean b) {
+        return 0;
+    }
+
+    @Override
+    public int getEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectEnergy(EnumFacing enumFacing) {
+        return false;
     }
 }

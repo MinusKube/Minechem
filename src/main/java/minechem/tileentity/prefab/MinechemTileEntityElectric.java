@@ -1,10 +1,10 @@
 package minechem.tileentity.prefab;
 
 import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.common.Optional;
 import minechem.Settings;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = "CoFHAPI|energy")
 public abstract class MinechemTileEntityElectric extends MinechemTileEntity implements IEnergyReceiver
@@ -66,28 +66,28 @@ public abstract class MinechemTileEntityElectric extends MinechemTileEntity impl
 
     @Optional.Method(modid = "CoFHAPI|energy")
     @Override
-    public boolean canConnectEnergy(ForgeDirection from)
+    public boolean canConnectEnergy(EnumFacing from)
     {
         return true;
     }
 
     @Optional.Method(modid = "CoFHAPI|energy")
     @Override
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate)
     {
         return receiveEnergy(maxReceive, simulate);
     }
 
     @Optional.Method(modid = "CoFHAPI|energy")
     @Override
-    public int getEnergyStored(ForgeDirection from)
+    public int getEnergyStored(EnumFacing from)
     {
         return getEnergyStored();
     }
 
     @Optional.Method(modid = "CoFHAPI|energy")
     @Override
-    public int getMaxEnergyStored(ForgeDirection from)
+    public int getMaxEnergyStored(EnumFacing from)
     {
         return getMaxEnergyStored();
     }
@@ -114,10 +114,12 @@ public abstract class MinechemTileEntityElectric extends MinechemTileEntity impl
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
         nbt.setInteger("energy", this.energyStored);
+
+        return nbt;
     }
 
     @Override

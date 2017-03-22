@@ -4,8 +4,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+
+import javax.annotation.Nullable;
 
 public abstract class MinechemTileEntity extends MinechemTileEntityBase implements IInventory
 {
@@ -16,13 +17,14 @@ public abstract class MinechemTileEntity extends MinechemTileEntityBase implemen
 
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket()
-    {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         this.writeToNBT(tagCompound);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, tagCompound);
+        return new SPacketUpdateTileEntity(pos, 0, tagCompound);
     }
+
 
     @Override
     public void readFromNBT(NBTTagCompound nbt)
@@ -31,15 +33,15 @@ public abstract class MinechemTileEntity extends MinechemTileEntityBase implemen
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        super.writeToNBT(nbt);
+        return super.writeToNBT(nbt);
     }
 
     @Override
@@ -55,9 +57,9 @@ public abstract class MinechemTileEntity extends MinechemTileEntityBase implemen
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
     {
-        this.readFromNBT(pkt.func_148857_g());
+        this.readFromNBT(pkt.getNbtCompound());
     }
 
     @Override
@@ -88,7 +90,7 @@ public abstract class MinechemTileEntity extends MinechemTileEntityBase implemen
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
+    public ItemStack removeStackFromSlot(int slot)
     {
         if (this.inventory[slot] != null)
         {

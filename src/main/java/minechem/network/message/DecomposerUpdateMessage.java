@@ -2,6 +2,7 @@ package minechem.network.message;
 
 import io.netty.buffer.ByteBuf;
 import minechem.tileentity.decomposer.DecomposerTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class DecomposerUpdateMessage implements IMessage, IMessageHandler<DecomposerUpdateMessage, IMessage>
+public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements IMessage, IMessageHandler<DecomposerUpdateMessage, IMessage>
 {
     private int posX, posY, posZ;
     private int energyStored, state;

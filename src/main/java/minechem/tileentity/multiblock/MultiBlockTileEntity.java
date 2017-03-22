@@ -1,6 +1,5 @@
 package minechem.tileentity.multiblock;
 
-import java.util.HashMap;
 import minechem.item.blueprint.BlueprintBlock;
 import minechem.item.blueprint.MinechemBlueprint;
 import minechem.tileentity.prefab.MinechemTileEntityElectric;
@@ -10,6 +9,9 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
 
 public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
 {
@@ -33,15 +35,15 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
     {
         this.blueprint = blueprint;
         this.structure = blueprint.getResultStructure();
-        this.offsetX = xCoord - blueprint.getManagerPosX();
-        this.offsetY = yCoord - blueprint.getManagerPosY();
-        this.offsetZ = zCoord - blueprint.getManagerPosZ();
+        this.offsetX = pos.getX() - blueprint.getManagerPosX();
+        this.offsetY = pos.getY() - blueprint.getManagerPosY();
+        this.offsetZ = pos.getZ() - blueprint.getManagerPosZ();
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        if (tracker.markTimeIfDelay(worldObj, 40))
+        if (tracker.markTimeIfDelay(world, 40))
         {
             if (completeStructure && !areBlocksCorrect())
             {
@@ -73,10 +75,10 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
 
     private void unlinkProxy(int x, int y, int z)
     {
-        int worldX = xCoord + offsetX + x;
-        int worldY = yCoord + offsetY + y;
-        int worldZ = zCoord + offsetZ + z;
-        TileEntity tileEntity = worldObj.getTileEntity(worldX, worldY, worldZ);
+        int worldX = pos.getX() + offsetX + x;
+        int worldY = pos.getY() + offsetY + y;
+        int worldZ = pos.getZ() + offsetZ + z;
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(worldX, worldY, worldZ));
         if (tileEntity != null && tileEntity instanceof TileEntityProxy)
         {
             ((TileEntityProxy) tileEntity).setManager(null);
@@ -99,11 +101,11 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
 
     private void linkProxy(int x, int y, int z)
     {
-        int worldX = xCoord + offsetX + x;
-        int worldY = yCoord + offsetY + y;
-        int worldZ = zCoord + offsetZ + z;
+        int worldX = pos.getX() + offsetX + x;
+        int worldY = pos.getY() + offsetY + y;
+        int worldZ = pos.getZ() + offsetZ + z;
         HashMap<Integer, BlueprintBlock> lut = blueprint.getBlockLookup();
-        TileEntity tileEntity = worldObj.getTileEntity(worldX, worldY, worldZ);
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(worldX, worldY, worldZ));
         if (tileEntity != null && tileEntity instanceof TileEntityProxy)
         {
             ((TileEntityProxy) tileEntity).setManager(this);
@@ -135,17 +137,17 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
         {
             return MultiBlockStatusEnum.CORRECT;
         }
-        int worldX = xCoord + (offsetX + x);
-        int worldY = yCoord + (offsetY + y);
-        int worldZ = zCoord + (offsetZ + z);
+        int worldX = pos.getX() + (offsetX + x);
+        int worldY = pos.getY() + (offsetY + y);
+        int worldZ = pos.getZ() + (offsetZ + z);
         Integer structureID = structure[y][x][z];
-        Block block = worldObj.getBlock(worldX, worldY, worldZ);
+        Block block = world.getBlockState(new BlockPos(worldX, worldY, worldZ)).getBlock();
         if (structureID == MinechemBlueprint.wildcard)
         {
             return MultiBlockStatusEnum.CORRECT;
         } else if (structureID == air)
         {
-            if (block == Blocks.air)
+            if (block == Blocks.AIR)
             {
                 return MultiBlockStatusEnum.CORRECT;
             } else
@@ -156,7 +158,7 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
         {
             HashMap<Integer, BlueprintBlock> lut = blueprint.getBlockLookup();
             BlueprintBlock blueprintBlock = lut.get(structureID);
-            if (block == blueprintBlock.block && worldObj.getBlockMetadata(worldX, worldY, worldZ) == blueprintBlock.metadata)
+            if (block == blueprintBlock.block && block.getMetaFromState(world.getBlockState(new BlockPos(worldX, worldY, worldZ))) == blueprintBlock.metadata)
             {
                 return MultiBlockStatusEnum.CORRECT;
             } else
@@ -167,10 +169,12 @@ public abstract class MultiBlockTileEntity extends MinechemTileEntityElectric
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         nbtTagCompound.setBoolean("completeStructure", completeStructure);
+
+        return nbtTagCompound;
     }
 
     @Override

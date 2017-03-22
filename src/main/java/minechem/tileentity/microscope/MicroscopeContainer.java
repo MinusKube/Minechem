@@ -53,7 +53,7 @@ public class MicroscopeContainer extends Container
     @Override
     public boolean canInteractWith(EntityPlayer var1)
     {
-        return microscope.isUseableByPlayer(var1);
+        return microscope.isUsableByPlayer(var1);
     }
 
     @Override

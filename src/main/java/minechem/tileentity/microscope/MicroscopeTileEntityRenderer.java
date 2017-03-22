@@ -15,7 +15,7 @@ public class MicroscopeTileEntityRenderer extends TileEntitySpecialRenderer
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float var8)
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float var8, int var9)
     {
         if (tileEntity instanceof MicroscopeTileEntity)
         {

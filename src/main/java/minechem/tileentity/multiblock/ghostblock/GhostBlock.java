@@ -1,85 +1,63 @@
 package minechem.tileentity.multiblock.ghostblock;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.MinechemBlocksGeneration;
-import minechem.reference.Textures;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class GhostBlock extends BlockContainer
 {
 
     public GhostBlock()
     {
-        super(Material.iron);
-        setBlockName("ghostBlock");
+        super(Material.IRON);
+        setRegistryName("ghostBlock");
+        setUnlocalizedName("ghostBlock");
         setLightLevel(0.5F);
         setHardness(1000F);
         setResistance(1000F);
     }
 
-    public IIcon icon1;
-    public IIcon icon2;
-
     @Override
-    public IIcon getIcon(int par1, int metadata)
-    {
-        switch (metadata)
-        {
-            case 0:
-                return icon1;
-            case 1:
-                return icon2;
-        }
-        return blockIcon;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister ir)
-    {
-        blockIcon = ir.registerIcon(Textures.IIcon.DEFAULT);
-        icon1 = ir.registerIcon(Textures.IIcon.BLUEPRINT1);
-        icon2 = ir.registerIcon(Textures.IIcon.BLUEPRINT2);
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float par7, float par8, float par9)
-    {
-        super.onBlockActivated(world, x, y, z, entityPlayer, side, par7, par8, par9);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    @Nullable ItemStack itemStack, EnumFacing facing, float f8, float f9, float f10) {
+        super.onBlockActivated(world, pos, state, player, hand, itemStack, facing, f8, f9, f10);
 
         if (world.isRemote)
         {
             return true;
         }
 
-        if (entityPlayer.getDistanceSq(x + 0.5D, y + 0.5D, z + 0.5D) > 64.0D)
+        if (player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) > 64.0D)
         {
             return true;
         }
 
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof GhostBlockTileEntity)
         {
             GhostBlockTileEntity ghostBlock = (GhostBlockTileEntity) tileEntity;
             ItemStack blockAsStack = ghostBlock.getBlockAsItemStack();
-            if (playerIsHoldingItem(entityPlayer, blockAsStack))
+            if (playerIsHoldingItem(player, blockAsStack))
             {
-                world.setBlock(x, y, z, MinechemBlocksGeneration.fusion, blockAsStack.getItemDamage(), 3);
-                if (!entityPlayer.capabilities.isCreativeMode)
+                world.setBlockState(pos, MinechemBlocksGeneration.fusion.getStateFromMeta(blockAsStack.getItemDamage()), 3);
+                if (!player.capabilities.isCreativeMode)
                 {
-                    entityPlayer.inventory.decrStackSize(entityPlayer.inventory.currentItem, 1);
+                    player.inventory.decrStackSize(player.inventory.currentItem, 1);
                 }
                 return true;
             }
@@ -103,69 +81,70 @@ public class GhostBlock extends BlockContainer
         return false;
     }
 
-    /**
-     * Returns whether this block is collideable based on the arguments passed in Args: blockMetaData, unknownFlag
-     */
     @Override
-    public boolean canCollideCheck(int par1, boolean par2)
-    {
+    public boolean canCollideCheck(IBlockState state, boolean bool) {
         return true;
     }
 
+    /**
+     * Returns whether this block is collideable based on the arguments passed in Args: blockMetaData, unknownFlag
+     */
+
     @Override
-    public int damageDropped(int par1)
+    public int damageDropped(IBlockState state)
     {
-        return par1;
+        return state.getBlock().getMetaFromState(state);
     }
 
     /**
      * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
      */
     @Override
-    public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
-    {
-        // Todo
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
     }
 
     /**
      * Returns a bounding box from the pool of bounding boxes (this means this box can change after the pool has been cleared to be reused)
      */
+    @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos) {
         return null;
     }
+
 
     /**
      * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given coordinates. Args: blockAccess, x, y, z, side
      */
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess access, BlockPos pos, EnumFacing facing) {
         return true;
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
 
     /**
      * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
      */
-    @Override
+    /*@Override
     @SideOnly(Side.CLIENT)
     public int getRenderBlockPass()
     {
         return 1;
+    }*/
+
+    // XXX: Maybe wrong replacement for getRenderBlockPass()
+    @Override
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
+
+
 
     @Override
     public TileEntity createNewTileEntity(World var1, int i)
@@ -177,11 +156,11 @@ public class GhostBlock extends BlockContainer
      * When player places a ghost block delete it
      */
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack)
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack itemStack)
     {
         if (entity instanceof EntityPlayer)
         {
-            world.setBlockToAir(x, y, z);
+            world.setBlockToAir(pos);
         }
     }
 }

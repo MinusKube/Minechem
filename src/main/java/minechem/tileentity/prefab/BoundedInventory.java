@@ -1,10 +1,13 @@
 package minechem.tileentity.prefab;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoundedInventory implements IInventory
 {
@@ -90,10 +93,10 @@ public class BoundedInventory implements IInventory
         return _inv.decrStackSize(_slots[slot], amount);
     }
 
+    @Nullable
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
-        return _inv.getStackInSlotOnClosing(_slots[slot]);
+    public ItemStack removeStackFromSlot(int i) {
+        return _inv.removeStackFromSlot(_slots[i]);
     }
 
     @Override
@@ -103,9 +106,9 @@ public class BoundedInventory implements IInventory
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
-        return _inv.getInventoryName();
+        return _inv.getName();
     }
 
     @Override
@@ -121,33 +124,58 @@ public class BoundedInventory implements IInventory
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player)
+    public boolean isUsableByPlayer(EntityPlayer player)
     {
-        return _inv.isUseableByPlayer(player);
+        return _inv.isUsableByPlayer(player);
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
-        _inv.openInventory();
+        _inv.openInventory(player);
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
-        _inv.closeInventory();
+        _inv.closeInventory(player);
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
-        return _inv.hasCustomInventoryName();
+        return _inv.hasCustomName();
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return _inv.getDisplayName();
     }
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack)
     {
         return _inv.isItemValidForSlot(_slots[i], itemstack);
+    }
+
+    @Override
+    public int getField(int i) {
+        return _inv.getField(i);
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+        _inv.setField(i, i1);
+    }
+
+    @Override
+    public int getFieldCount() {
+        return _inv.getFieldCount();
+    }
+
+    @Override
+    public void clear() {
+        _inv.clear();
     }
 
 }

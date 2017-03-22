@@ -1,44 +1,47 @@
 package minechem.tileentity.multiblock.fusion;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import minechem.Minechem;
 import minechem.block.BlockSimpleContainer;
 import minechem.gui.CreativeTabMinechem;
-import minechem.reference.Textures;
 import minechem.tileentity.multiblock.MultiBlockTileEntity;
 import minechem.tileentity.multiblock.fission.FissionTileEntity;
 import minechem.tileentity.prefab.TileEntityProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class FusionBlock extends BlockSimpleContainer
 {
-    private IIcon icon1, icon2;
 
     public FusionBlock()
     {
-        super(Material.iron);
+        super(Material.IRON);
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
-        setBlockName("fusionWall");
+        setUnlocalizedName("fusionWall");
+        setRegistryName("fusionWall");
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float par7, float par8, float par9)
-    {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    @Nullable ItemStack itemStack, EnumFacing facing, float f8, float f9, float f10) {
+
+        TileEntity tileEntity = world.getTileEntity(pos);
 
         if (tileEntity == null)
         {
@@ -46,7 +49,7 @@ public class FusionBlock extends BlockSimpleContainer
         }
         if (!world.isRemote)
         {
-            entityPlayer.openGui(Minechem.INSTANCE, 0, world, x, y, z);
+            player.openGui(Minechem.INSTANCE, 0, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }
@@ -69,8 +72,9 @@ public class FusionBlock extends BlockSimpleContainer
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata)
+    public TileEntity createTileEntity(World world, IBlockState state)
     {
+        int metadata = state.getBlock().getMetaFromState(state);
         if (metadata == 2)
         {
             return new FusionTileEntity();
@@ -85,39 +89,18 @@ public class FusionBlock extends BlockSimpleContainer
     }
 
     @Override
-    public int damageDropped(int metadata)
+    public int damageDropped(IBlockState state)
     {
-        return metadata;
+        return state.getBlock().getMetaFromState(state);
     }
 
     // Do not drop if this is a reactor core
     @Override
-    public int quantityDropped(int meta, int fortune, Random random)
+    public int quantityDropped(IBlockState state, int fortune, Random random)
     {
-        return meta < 2 ? 1 : 0;
+        return state.getBlock().getMetaFromState(state) < 2 ? 1 : 0;
     }
 
-    @Override
-    public IIcon getIcon(int par1, int metadata)
-    {
-        switch (metadata)
-        {
-            case 0:
-                return icon1;
-            case 1:
-                return icon2;
-        }
-        return blockIcon;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister ir)
-    {
-        blockIcon = ir.registerIcon(Textures.IIcon.DEFAULT);
-        icon1 = ir.registerIcon(Textures.IIcon.FUSION1);
-        icon2 = ir.registerIcon(Textures.IIcon.FUSION2);
-    }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -130,9 +113,9 @@ public class FusionBlock extends BlockSimpleContainer
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int metaData)
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
-        super.breakBlock(world, x, y, z, block, metaData);
+        super.breakBlock(world, pos, state);
     }
 
     @Override

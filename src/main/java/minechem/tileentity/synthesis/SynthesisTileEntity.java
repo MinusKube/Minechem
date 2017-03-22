@@ -1,10 +1,5 @@
 package minechem.tileentity.synthesis;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import java.util.ArrayList;
-import java.util.List;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.network.MessageHandler;
@@ -19,7 +14,14 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SynthesisTileEntity extends MinechemTileEntityElectric implements ISidedInventory
 {
@@ -344,11 +346,11 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
      */
     public int getFacing()
     {
-        return worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        return world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.synthesis";
     }
@@ -384,20 +386,20 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
     {
-        double dist = entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D);
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false : dist <= 64.0D;
+        double dist = entityPlayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+        return world.getTileEntity(pos) != this ? false : dist <= 64.0D;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
 
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
 
     }
@@ -445,7 +447,7 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -484,11 +486,11 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
 
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             updateHandler();
         }
@@ -520,7 +522,7 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
         {
             oldEnergyStored = energyStored;
             SynthesisUpdateMessage message = new SynthesisUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.getPos().getY(), this.getPos().getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -538,11 +540,13 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
         NBTTagList inventoryTagList = MinechemUtil.writeItemStackArrayToTagList(inventory);
         nbt.setTag("inventory", inventoryTagList);
+
+        return nbt;
     }
 
     /**
@@ -724,9 +728,29 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int var1)
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing facing)
     {
-        if (var1 != 1 && takeStacksFromStorage(false))
+        if (facing.getIndex() != 1 && takeStacksFromStorage(false))
         {
             return SynthesisTileEntity.kOutput;
         }
@@ -734,15 +758,15 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemstack, int side)
+    public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
-        return Settings.AllowAutomation && itemstack!=null && ((slot > 0 && side > 0 && (itemstack.getItem() == MinechemItemsRegistration.element || itemstack.getItem() == MinechemItemsRegistration.molecule)) || (slot == kJournal[0] && this.inventory[slot] == null && itemstack.getItem() == MinechemItemsRegistration.journal));
+        return Settings.AllowAutomation && itemstack!=null && ((slot > 0 && facing.getIndex() > 0 && (itemstack.getItem() == MinechemItemsRegistration.element || itemstack.getItem() == MinechemItemsRegistration.molecule)) || (slot == kJournal[0] && this.inventory[slot] == null && itemstack.getItem() == MinechemItemsRegistration.journal));
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack itemstack, int side)
+    public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
-        return Settings.AllowAutomation && ((side == 0 && slot == 0 && canTakeOutputStack(false)) || (side != 0 && slot == kJournal[0]));
+        return Settings.AllowAutomation && ((facing.getIndex() == 0 && slot == 0 && canTakeOutputStack(false)) || (facing.getIndex() != 0 && slot == kJournal[0]));
     }
 
     public String getState()

@@ -14,6 +14,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInventory
 {
@@ -37,14 +41,14 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
-        super.updateEntity();
+        super.update();
         if (!completeStructure)
         {
             return;
         }
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             if (inventory[kStartInput] != null)
             {
@@ -59,7 +63,7 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
                 }
             }
             FissionUpdateMessage message = new FissionUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -125,6 +129,12 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
         return 3;
     }
 
+    @Nullable
+    @Override
+    public ItemStack removeStackFromSlot(int i) {
+        return null;
+    }
+
     @Override
     public void setInventorySlotContents(int slot, ItemStack itemstack)
     {
@@ -134,32 +144,32 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.minechemFission";
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
     {
         return completeStructure;
 
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer entityPlayer)
     {
 
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer entityPlayer)
     {
 
     }
@@ -198,11 +208,30 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int i)
-    {
-        switch (i)
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing enumFacing) {
+        switch (enumFacing)
         {
-            case 0:
+            case DOWN:
                 return FissionTileEntity.kOutput;
             default:
                 return FissionTileEntity.kInput;
@@ -210,13 +239,13 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public boolean canInsertItem(int i, ItemStack itemStack, int i2)
+    public boolean canInsertItem(int i, ItemStack itemStack, EnumFacing facing)
     {
         return false;
     }
 
     @Override
-    public boolean canExtractItem(int i, ItemStack itemStack, int i2)
+    public boolean canExtractItem(int i, ItemStack itemStack, EnumFacing facing)
     {
         return false;
     }
@@ -229,5 +258,25 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
             return (inventory[0].getItemDamage()) * Settings.fissionMultiplier;
         }
         return 0;
+    }
+
+    @Override
+    public int receiveEnergy(EnumFacing enumFacing, int i, boolean b) {
+        return 0;
+    }
+
+    @Override
+    public int getEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectEnergy(EnumFacing enumFacing) {
+        return false;
     }
 }

@@ -1,6 +1,5 @@
 package minechem.tileentity.multiblock.ghostblock;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
 import minechem.Settings;
 import minechem.item.blueprint.BlueprintBlock;
 import minechem.item.blueprint.MinechemBlueprint;
@@ -11,6 +10,9 @@ import minechem.utils.LogHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class GhostBlockTileEntity extends MinechemTileEntity
 {
@@ -21,11 +23,14 @@ public class GhostBlockTileEntity extends MinechemTileEntity
     {
         setBlueprint(blueprint);
         setBlockID(blockID);
-        this.worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, blueprint.getBlockLookup().get(this.blockID).metadata, 3);
-        if (worldObj != null && !worldObj.isRemote)
+
+        BlueprintBlock bp = blueprint.getBlockLookup().get(this.blockID);
+
+        this.world.setBlockState(pos, bp.block.getStateFromMeta(bp.metadata), 3);
+        if (world != null && !world.isRemote)
         {
             GhostBlockMessage message = new GhostBlockMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -63,13 +68,13 @@ public class GhostBlockTileEntity extends MinechemTileEntity
             // this code has now failed
             // it cannot be recovered
             // snowflake on hot iron
-            LogHelper.debug("Block generated an exception at: x" + this.xCoord + " y" + this.yCoord + " z" + this.zCoord);
+            LogHelper.debug("Block generated an exception at: " + pos.toString());
         }
         return null;
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         if (blueprint != null)
@@ -78,6 +83,7 @@ public class GhostBlockTileEntity extends MinechemTileEntity
         }
 
         nbtTagCompound.setInteger("blockID", blockID);
+        return nbtTagCompound;
     }
 
     @Override
@@ -95,14 +101,20 @@ public class GhostBlockTileEntity extends MinechemTileEntity
         return 0;
     }
 
+    @Nullable
     @Override
-    public String getInventoryName()
+    public ItemStack removeStackFromSlot(int i) {
+        return null;
+    }
+
+    @Override
+    public String getName()
     {
         return null;
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -114,19 +126,39 @@ public class GhostBlockTileEntity extends MinechemTileEntity
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer)
     {
         return false;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer entityplayer)
     {
 
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer entityplayer)
     {
 
     }

@@ -2,32 +2,11 @@ package minechem.tileentity.prefab;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 
-public abstract class MinechemTileEntityBase extends TileEntity
+public abstract class MinechemTileEntityBase extends TileEntity implements ITickable
 {
     protected long ticks = 0;
-
-    @Override
-    public int getBlockMetadata()
-    {
-        if (this.blockMetadata == -1)
-        {
-            this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
-        }
-
-        return this.blockMetadata;
-    }
-
-    @Override
-    public Block getBlockType()
-    {
-        if (this.blockType == null)
-        {
-            this.blockType = this.worldObj.getBlock(this.xCoord, this.yCoord, this.zCoord);
-        }
-
-        return this.blockType;
-    }
 
     public void setBlockType(Block block) {
         this.blockType = block;
@@ -41,7 +20,7 @@ public abstract class MinechemTileEntityBase extends TileEntity
     //{
     //}
     @Override
-    public void updateEntity()
+    public void update()
     {
         //if (this.ticks == 0)
         //{

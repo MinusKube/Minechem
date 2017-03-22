@@ -1,6 +1,5 @@
 package minechem.utils;
 
-import java.util.ArrayList;
 import minechem.item.ChemicalRoomStateEnum;
 import minechem.item.element.ElementClassificationEnum;
 import minechem.potion.PotionChemical;
@@ -16,6 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InputHelper
 {
@@ -202,7 +204,7 @@ public class InputHelper
         } else if (ingredient instanceof IOreDictEntry)
         {
 
-            ArrayList<ItemStack> results = (ArrayList<ItemStack>) OreDictionary.getOres(((IOreDictEntry) ingredient).getName()).clone();
+            List<ItemStack> results = new ArrayList<ItemStack>(OreDictionary.getOres(((IOreDictEntry) ingredient).getName()));
             for (ItemStack res : results)
             {
                 ItemStack result = res.copy();

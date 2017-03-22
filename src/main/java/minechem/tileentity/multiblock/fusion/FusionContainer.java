@@ -44,7 +44,7 @@ public class FusionContainer extends Container implements IRadiationShield
     @Override
     public boolean canInteractWith(EntityPlayer var1)
     {
-        return fusion.isUseableByPlayer(var1);
+        return fusion.isUsableByPlayer(var1);
     }
 
     @Override

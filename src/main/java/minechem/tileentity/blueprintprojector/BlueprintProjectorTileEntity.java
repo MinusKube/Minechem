@@ -47,7 +47,7 @@ public class BlueprintProjectorTileEntity extends MinechemTileEntity
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
         if (blueprint != null && !isComplete)
         {
@@ -350,7 +350,7 @@ public class BlueprintProjectorTileEntity extends MinechemTileEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         ItemStack blueprintStack = inventory[0];
@@ -360,6 +360,8 @@ public class BlueprintProjectorTileEntity extends MinechemTileEntity
             blueprintStack.writeToNBT(blueprintNBT);
             nbtTagCompound.setTag("blueprint", blueprintNBT);
         }
+
+        return nbtTagCompound;
     }
 
     @Override

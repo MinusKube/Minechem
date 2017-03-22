@@ -1,14 +1,16 @@
 package minechem.tileentity.synthesis;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import minechem.Settings;
 import minechem.potion.PotionChemical;
 import minechem.utils.MapKey;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class SynthesisRecipe
 {
@@ -39,7 +41,7 @@ public class SynthesisRecipe
 
     public static void createAndAddRecipeSafely(String item, boolean shaped, int energyCost, PotionChemical... chemicals)
     {
-        ArrayList<ItemStack> oreDictEntries = OreDictionary.getOres(item);
+        List<ItemStack> oreDictEntries = OreDictionary.getOres(item);
         int entry = 0;
         for (Iterator<ItemStack> itr = oreDictEntries.iterator(); itr.hasNext() && entry<8; entry++)
         {

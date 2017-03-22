@@ -4,11 +4,14 @@ import minechem.MinechemBlocksGeneration;
 import minechem.Settings;
 import minechem.tileentity.multiblock.fission.FissionTileEntity;
 import minechem.tileentity.multiblock.fusion.FusionTileEntity;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class TileEntityProxy extends MinechemTileEntityElectric implements ISidedInventory
 {
@@ -24,7 +27,7 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     int managerZOffset;
 
     @Override
-    public void updateEntity()
+    public void update()
     {
         if (this.manager != null)
         {
@@ -38,15 +41,17 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound)
     {
         super.writeToNBT(nbtTagCompound);
         if (manager != null)
         {
-            nbtTagCompound.setInteger("managerXOffset", manager.xCoord);
-            nbtTagCompound.setInteger("managerYOffset", manager.yCoord);
-            nbtTagCompound.setInteger("managerZOffset", manager.zCoord);
+            nbtTagCompound.setInteger("managerXOffset", manager.getPos().getX());
+            nbtTagCompound.setInteger("managerYOffset", manager.getPos().getY());
+            nbtTagCompound.setInteger("managerZOffset", manager.getPos().getZ());
         }
+
+        return nbtTagCompound;
     }
 
     @Override
@@ -56,9 +61,9 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
         managerXOffset = nbtTagCompound.getInteger("managerXOffset");
         managerYOffset = nbtTagCompound.getInteger("managerYOffset");
         managerZOffset = nbtTagCompound.getInteger("managerZOffset");
-        if (worldObj != null)
+        if (world != null)
         {
-            manager = worldObj.getTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset);
+            manager = world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
         }
 
     }
@@ -69,23 +74,23 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
         this.manager = managerTileEntity;
         if (managerTileEntity != null)
         {
-            this.managerXOffset = managerTileEntity.xCoord - xCoord;
-            this.managerYOffset = managerTileEntity.yCoord - yCoord;
-            this.managerZOffset = managerTileEntity.zCoord - zCoord;
+            this.managerXOffset = managerTileEntity.getPos().getX() - pos.getX();
+            this.managerYOffset = managerTileEntity.getPos().getY() - pos.getY();
+            this.managerZOffset = managerTileEntity.getPos().getZ() - pos.getZ();
         }
     }
 
     public TileEntity getManager()
     {
         // Return the next block in sequence but never the TileEntityProxy.
-        if (worldObj.getTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset) != null
-                && !(worldObj.getTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset) instanceof TileEntityProxy))
+        if (world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) != null
+                && !(world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) instanceof TileEntityProxy))
         {
-            return worldObj.getTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset);
+            return world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
         }
 
         // Return the entire fusion generator as a whole (indicating the structure is complete).
-        if (worldObj.getBlock(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset) == MinechemBlocksGeneration.fusion)
+        if (world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) == MinechemBlocksGeneration.fusion)
         {
             this.manager = buildManagerBlock();
             return this.manager;
@@ -97,28 +102,32 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
 
     private TileEntity buildManagerBlock()
     {
+        IBlockState state = this.world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
 
-        if (this.worldObj.getBlockMetadata(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset) == 2)
+        if (state.getBlock().getMetaFromState(state) == 2)
         {
             FusionTileEntity fusion = new FusionTileEntity();
-            fusion.setWorldObj(this.worldObj);
-            fusion.zCoord = this.managerZOffset + zCoord;
-            fusion.yCoord = this.managerYOffset + yCoord;
-            fusion.xCoord = this.managerXOffset + xCoord;
-            fusion.blockType = MinechemBlocksGeneration.fusion;
-            worldObj.setTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset, fusion);
+            fusion.setWorld(this.world);
+            fusion.setPos(new BlockPos(this.managerXOffset + pos.getX(),
+                    this.managerYOffset + pos.getY(),
+                    this.managerZOffset + pos.getZ()));
+
+            fusion.setBlockType(MinechemBlocksGeneration.fusion);
+            world.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fusion);
         }
-        if (this.worldObj.getBlockMetadata(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset) == 3)
+
+        state = this.world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+        if (state.getBlock().getMetaFromState(state) == 3)
         {
             FissionTileEntity fission = new FissionTileEntity();
-            fission.setWorldObj(this.worldObj);
-            fission.zCoord = this.managerZOffset + zCoord;
-            fission.yCoord = this.managerYOffset + yCoord;
-            fission.xCoord = this.managerXOffset + xCoord;
-            fission.blockType = MinechemBlocksGeneration.fusion;
-            worldObj.setTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset, fission);
+            fission.setWorld(this.world);
+            fission.setPos(new BlockPos(this.managerXOffset + pos.getX(),
+                    this.managerYOffset + pos.getY(),
+                    this.managerZOffset + pos.getZ()));
+            fission.setBlockType(MinechemBlocksGeneration.fusion);
+            world.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fission);
         }
-        return worldObj.getTileEntity(xCoord + managerXOffset, yCoord + managerYOffset, zCoord + managerZOffset);
+        return world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
 
     }
 
@@ -153,11 +162,11 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int i)
+    public ItemStack removeStackFromSlot(int i)
     {
         if (this.getManager() != null && this.getManager() instanceof ISidedInventory)
         {
-            return ((ISidedInventory) this.getManager()).getStackInSlotOnClosing(i);
+            return ((ISidedInventory) this.getManager()).removeStackFromSlot(i);
         }
         return null;
     }
@@ -172,13 +181,13 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "Multiblock Minechem proxy";
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -194,19 +203,19 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
     {
         return false;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
 
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
 
     }
@@ -222,28 +231,48 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int var1)
-    {
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing enumFacing) {
         if (this.manager != null && this.manager != this)
         {
-            return ((ISidedInventory) this.getManager()).getAccessibleSlotsFromSide(var1);
+            return ((ISidedInventory) this.getManager()).getSlotsForFace(enumFacing);
         }
         return new int[0];
     }
 
+
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemstack, int side)
+    public boolean canInsertItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
         // Cannot insert items into reactor with automation disabled.
         return Settings.AllowAutomation && isItemValidForSlot(slot, itemstack);
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack itemstack, int side)
+    public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing facing)
     {
         // Cannot extract items from reactor with automation disabled.
         // Can only extract from the bottom.
-        return Settings.AllowAutomation && side == 0 && slot == 2;
+        return Settings.AllowAutomation && facing.getIndex() == 0 && slot == 2;
     }
 
     @Override

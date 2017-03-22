@@ -67,7 +67,7 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
+    public ItemStack removeStackFromSlot(int slot)
     {
         ItemStack stack = this.getStackInSlot(slot);
         if (stack != null)
@@ -78,13 +78,13 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
     }
 
     @Override
-    public String getInventoryName()
+    public String getName()
     {
         return "container.leadedchest";
     }
 
     @Override
-    public boolean hasCustomInventoryName()
+    public boolean hasCustomName()
     {
         return false;
     }
@@ -96,19 +96,19 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player)
+    public boolean isUsableByPlayer(EntityPlayer player)
     {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+        return world.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
     }
 
     @Override
-    public void openInventory()
+    public void openInventory(EntityPlayer player)
     {
 
     }
 
     @Override
-    public void closeInventory()
+    public void closeInventory(EntityPlayer player)
     {
 
     }
@@ -120,6 +120,26 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
         // ripples through a broken dam
         // anything goes here
         return true;
+
+    }
+
+    @Override
+    public int getField(int i) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
 
     }
 
@@ -141,7 +161,7 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound)
     {
         super.writeToNBT(nbttagcompound);
         NBTTagList nbttaglist = new NBTTagList();
@@ -157,6 +177,7 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
         }
 
         nbttagcompound.setTag("Items", nbttaglist);
+        return nbttagcompound;
     }
 
 }

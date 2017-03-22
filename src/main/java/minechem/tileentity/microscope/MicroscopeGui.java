@@ -1,6 +1,5 @@
 package minechem.tileentity.microscope;
 
-import java.util.ArrayList;
 import minechem.gui.GuiContainerTabbed;
 import minechem.gui.GuiTabHelp;
 import minechem.gui.GuiTabPatreon;
@@ -18,6 +17,9 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class MicroscopeGui extends GuiContainerTabbed
 {
@@ -225,8 +227,7 @@ public class MicroscopeGui extends GuiContainerTabbed
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseButton)
-    {
+    protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
         super.mouseClicked(x, y, mouseButton);
         this.recipeSwitch.mouseClicked(x, y, mouseButton);
     }
@@ -235,7 +236,7 @@ public class MicroscopeGui extends GuiContainerTabbed
     public void drawScreen(int par1, int par2, float par3)
     {
         super.drawScreen(par1, par2, par3);
-        renderItem.renderItemAndEffectIntoGUI(fontRendererObj, this.mc.getTextureManager(), microscope.getStackInSlot(0), par1, par2);
-        renderItem.renderItemAndEffectIntoGUI(fontRendererObj, this.mc.getTextureManager(), inventoryPlayer.getItemStack(), par1, par2);
+        renderItem.renderItemAndEffectIntoGUI(microscope.getStackInSlot(0), par1, par2);
+        renderItem.renderItemAndEffectIntoGUI(inventoryPlayer.getItemStack(), par1, par2);
     }
 }

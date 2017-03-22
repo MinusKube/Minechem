@@ -1,9 +1,5 @@
 package minechem.tileentity.synthesis;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import minechem.Minechem;
 import minechem.Settings;
 import minechem.block.BlockSimpleContainer;
@@ -11,16 +7,23 @@ import minechem.gui.CreativeTabMinechem;
 import minechem.network.MessageHandler;
 import minechem.network.message.SynthesisUpdateMessage;
 import minechem.proxy.CommonProxy;
-import minechem.reference.Textures;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * Chemical Synthesizer block. Its associated TileEntitySynthesis's inventory inventory has many specialized slots, including some "ghost" slots whose contents don't really exist and shouldn't be able
@@ -31,39 +34,41 @@ public class SynthesisBlock extends BlockSimpleContainer
 
     public SynthesisBlock()
     {
-        super(Material.iron);
-        setBlockName("chemicalSynthesizer");
+        super(Material.IRON);
+        setRegistryName("chemicalSynthesizer");
+        setUnlocalizedName("chemicalSynthesizer");
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase el, ItemStack is)
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase el, ItemStack is)
     {
-        super.onBlockPlacedBy(world, x, y, z, el, is);
-        int facing = MathHelper.floor_double(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-        world.setBlockMetadataWithNotify(x, y, z, facing, 2);
+        super.onBlockPlacedBy(world, pos, state, el, is);
+        int facing = MathHelper.floor(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+        world.setBlockState(pos, state.getBlock().getStateFromMeta(facing), 2);
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int par6, float par7, float par8, float par9)
-    {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity == null || entityPlayer.isSneaking())
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    @Nullable ItemStack itemStack, EnumFacing facing, float f8, float f9, float f10) {
+
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity == null || player.isSneaking())
         {
             return false;
         }
         if (!world.isRemote)
         {
             SynthesisUpdateMessage message = new SynthesisUpdateMessage((SynthesisTileEntity)tileEntity);
-            if (entityPlayer instanceof EntityPlayerMP)
+            if (player instanceof EntityPlayerMP)
             {
-                MessageHandler.INSTANCE.sendTo(message, (EntityPlayerMP) entityPlayer);
+                MessageHandler.INSTANCE.sendTo(message, (EntityPlayerMP) player);
             } else
             {
-                MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.dimensionId, x, y, z, Settings.UpdateRadius));
+                MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
             }
         }
-        entityPlayer.openGui(Minechem.INSTANCE, 0, world, x, y, z);
+        player.openGui(Minechem.INSTANCE, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 
@@ -92,28 +97,15 @@ public class SynthesisBlock extends BlockSimpleContainer
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister ir)
+    public EnumBlockRenderType getRenderType(IBlockState state)
     {
-        blockIcon = ir.registerIcon(Textures.IIcon.SYNTHESIS);
-    }
-
-    @Override
-    public int getRenderType()
-    {
-        return CommonProxy.RENDER_ID;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
+        return EnumBlockRenderType.values()[CommonProxy.RENDER_ID];
     }
 
 }

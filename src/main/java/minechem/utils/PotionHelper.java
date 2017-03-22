@@ -1,8 +1,10 @@
 package minechem.utils;
 
+import net.minecraft.potion.Potion;
+
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.minecraft.potion.Potion;
 
 public class PotionHelper
 {
@@ -20,14 +22,16 @@ public class PotionHelper
 
     public static String getPotionNameById(int id)
     {
-        Potion potion = Potion.potionTypes[id];
+        Potion potion = Potion.getPotionById(id);
         return potion == null ? "" : potion.getName();
     }
 
     private static void registerPotions()
     {
-        for (Potion potion : Potion.potionTypes)
+        for (Iterator<Potion> iter = Potion.REGISTRY.iterator(); iter.hasNext(); )
         {
+            Potion potion = iter.next();
+
             if (potion != null)
             {
                 potionMap.put(potion.getName().startsWith("potion.") ? potion.getName().substring(7).toLowerCase() : potion.getName().toLowerCase(), potion);

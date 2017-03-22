@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 public class SynthesisTileEntityRenderer extends TileEntitySpecialRenderer
 {
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float scale)
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float scale, int i)
     {
         if (tileEntity instanceof SynthesisTileEntity)
         {

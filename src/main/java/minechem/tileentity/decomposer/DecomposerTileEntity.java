@@ -17,12 +17,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -436,11 +435,6 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         return activeStack;
     }
 
-    public String getInventoryName()
-    {
-        return "container.decomposer";
-    }
-
     @Override
     public int getSizeInventory()
     {
@@ -666,10 +660,10 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public void updateEntity()
+    public void update()
     {
         // Trigger updates in classes below us.
-        super.updateEntity();
+        super.update();
 
         // Prevents any code below this line from running on clients.
         if (world.isRemote)
@@ -715,7 +709,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
 
@@ -742,13 +736,14 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         }
 
         nbt.setByte("state", (byte) state.ordinal());
+        return nbt;
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket()
-    {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         writeToNBT(new NBTTagCompound());
-        return MessageHandler.INSTANCE.getPacketFrom(new DecomposerUpdateMessage(this));
+        return (SPacketUpdateTileEntity) MessageHandler.INSTANCE.getPacketFrom(new DecomposerUpdateMessage(this));
     }
 
     public String getStateString()
@@ -792,7 +787,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
 
     @Override
     public String getName() {
-        return null;
+        return "container.decomposer";
     }
 
     @Override

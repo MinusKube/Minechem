@@ -1,11 +1,9 @@
 package minechem.tileentity.microscope;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -19,7 +17,12 @@ public class MicroscopeRenderGUIItem extends RenderItem
 
     public MicroscopeRenderGUIItem(MicroscopeGui microscopeGui)
     {
-        super();
+        super(
+                Minecraft.getMinecraft().getTextureManager(),
+                Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager(),
+                Minecraft.getMinecraft().getItemColors()
+        );
+
         this.microscopeGui = microscopeGui;
         microscopeContainer = (MicroscopeContainer) microscopeGui.inventorySlots;
         inventoryPlayer = microscopeGui.inventoryPlayer;
@@ -28,7 +31,7 @@ public class MicroscopeRenderGUIItem extends RenderItem
     private void setScissor(float x, float y, float w, float h)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution scaledRes = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution scaledRes = new ScaledResolution(mc);
         int scale = scaledRes.getScaleFactor();
         x *= scale;
         y *= scale;
@@ -50,7 +53,7 @@ public class MicroscopeRenderGUIItem extends RenderItem
     }
 
     @Override
-    public void renderItemAndEffectIntoGUI(FontRenderer fontRenderer, TextureManager textureManager, ItemStack itemStack, int x, int y)
+    public void renderItemAndEffectIntoGUI(ItemStack itemStack, int x, int y)
     {
         if (itemStack == null)
         {
@@ -64,12 +67,12 @@ public class MicroscopeRenderGUIItem extends RenderItem
         {
             GL11.glPushMatrix();
             setScissor(microscopeGui.eyepieceX, microscopeGui.eyepieceY, 52, 52);
-            int renderX = microscopeGui.getGuiLeft() + slot.xDisplayPosition;
-            int renderY = microscopeGui.getGuiTop() + slot.yDisplayPosition;
+            int renderX = microscopeGui.getGuiLeft() + slot.xPos;
+            int renderY = microscopeGui.getGuiTop() + slot.yPos;
             GL11.glTranslatef(renderX, renderY, 0.0F);
             GL11.glScalef(3.0F, 3.0F, 1.0F);
             GL11.glTranslatef(-renderX - 5.3F, -renderY - 5.3F, 2.0F);
-            super.renderItemAndEffectIntoGUI(fontRenderer, textureManager, slot.getStack(), renderX, renderY);
+            super.renderItemAndEffectIntoGUI(slot.getStack(), renderX, renderY);
             stopScissor();
             GL11.glPopMatrix();
         }
@@ -83,7 +86,7 @@ public class MicroscopeRenderGUIItem extends RenderItem
             GL11.glTranslatef(renderX, renderY, 0.0F);
             GL11.glScalef(3.0F, 3.0F, 1.0F);
             GL11.glTranslatef(-renderX - 5.3F, -renderY - 5.3F, 540F);
-            super.renderItemAndEffectIntoGUI(fontRenderer, textureManager, itemStack, renderX, renderY);
+            super.renderItemAndEffectIntoGUI(itemStack, renderX, renderY);
             stopScissor();
             GL11.glPopMatrix();
         }

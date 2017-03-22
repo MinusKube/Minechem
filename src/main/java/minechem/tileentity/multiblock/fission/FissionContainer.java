@@ -55,7 +55,7 @@ public class FissionContainer extends Container implements IRadiationShield
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer)
     {
-        return fission.isUseableByPlayer(entityPlayer);
+        return fission.isUsableByPlayer(entityPlayer);
     }
 
     @Override
