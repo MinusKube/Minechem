@@ -1,8 +1,8 @@
 package minechem.utils;
 
-import cpw.mods.fml.common.FMLLog;
 import minechem.Settings;
 import minechem.reference.Reference;
+import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
 /**

@@ -1,22 +1,23 @@
 package minechem.utils;
 
 import java.util.HashMap;
-import net.minecraftforge.common.util.ForgeDirection;
+
+import net.minecraft.util.EnumFacing;
 
 public enum DirectionMultiplier
 {
     NORTH(1, 1, 1), EAST(-1, 1, 1), SOUTH(-1, 1, -1), WEST(1, 1, -1), UP(1, 1, 1), DOWN(1, -1, 1),;
 
-    public static HashMap<ForgeDirection, DirectionMultiplier> map = new HashMap<ForgeDirection, DirectionMultiplier>()
+    public static HashMap<EnumFacing, DirectionMultiplier> map = new HashMap<EnumFacing, DirectionMultiplier>()
     {
         private static final long serialVersionUID = 1L;
 
 
         {
-            put(ForgeDirection.NORTH, NORTH);
-            put(ForgeDirection.EAST, EAST);
-            put(ForgeDirection.SOUTH, SOUTH);
-            put(ForgeDirection.WEST, WEST);
+            put(EnumFacing.NORTH, NORTH);
+            put(EnumFacing.EAST, EAST);
+            put(EnumFacing.SOUTH, SOUTH);
+            put(EnumFacing.WEST, WEST);
         }
     };
     public int xMultiplier;

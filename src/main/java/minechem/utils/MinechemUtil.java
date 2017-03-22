@@ -1,10 +1,5 @@
 package minechem.utils;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import cpw.mods.fml.server.FMLServerHandler;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.fluid.FluidElement;
@@ -33,15 +28,22 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.LanguageMap;
+import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.server.FMLServerHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.net.URI;
@@ -112,7 +114,7 @@ public final class MinechemUtil
             entityitem.motionX = (float) random.nextGaussian() * f3;
             entityitem.motionY = (float) random.nextGaussian() * f3 + 0.2F;
             entityitem.motionZ = (float) random.nextGaussian() * f3;
-            world.spawnEntityInWorld(entityitem);
+            world.spawnEntity(entityitem);
         }
     }
 
@@ -131,12 +133,12 @@ public final class MinechemUtil
 
     public static boolean canDrain(World world, Block block, int x, int y, int z)
     {
-        if ((block == Blocks.water || block == Blocks.flowing_water) && world.getBlockMetadata(x, y, z) == 0)
+        if ((block == Blocks.WATER || block == Blocks.FLOWING_WATER) && world.getBlockState(new BlockPos(x, y, z)).getBlock().getMetaFromState(world.getBlockState(new BlockPos(x, y, z))) == 0)
         {
             return true;
         } else if (block instanceof IFluidBlock)
         {
-            return ((IFluidBlock) block).canDrain(world, x, y, z);
+            return ((IFluidBlock) block).canDrain(world, new BlockPos(x, y, z));
         }
 
         return false;
@@ -149,7 +151,7 @@ public final class MinechemUtil
         {
             Fluid fluid = ((IFluidBlock) block).getFluid();
             chemical = getChemical(fluid);
-        } else if (block == Blocks.water || block == Blocks.flowing_water)
+        } else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
         {
             chemical = MoleculeEnum.water;
         }
@@ -196,12 +198,13 @@ public final class MinechemUtil
         return null;
     }
 
+    // TODO EH LOL PTET CA MARCHE PAS
     public static Fluid getFluid(IFluidHandler te)
     {
         FluidTankInfo[] tanks = null;
         for (int i = 0; i < 6; i++)
         {
-            tanks = te.getTankInfo(ForgeDirection.getOrientation(i));
+            tanks = te.getTankInfo(EnumFacing.fromAngle(i));
             if (tanks != null)
             {
                 for (FluidTankInfo tank : tanks)
@@ -257,14 +260,14 @@ public final class MinechemUtil
                 extraStack.stackSize = inc - added;
                 if (!player.inventory.addItemStackToInventory(extraStack))
                 {
-                    player.dropPlayerItemWithRandomChoice(extraStack, false);
+                    player.dropItem(extraStack, false);
                 }
             }
         }
 
         if (!player.inventory.addItemStackToInventory(give))
         {
-            player.dropPlayerItemWithRandomChoice(give, false);
+            player.dropItem(give, false);
         }
     }
 
@@ -386,7 +389,7 @@ public final class MinechemUtil
                 }
                 for (String key : wildcardMatch)
                 {
-                    Object disable = GameData.getItemRegistry().getObject(key);
+                    Object disable = GameData.getItemRegistry().getObject(new ResourceLocation(key));
                     if (disable instanceof Item)
                     {
                         decomposerBlacklist.add(new ItemStack(((Item) disable), 1, meta));
@@ -415,9 +418,10 @@ public final class MinechemUtil
         addDisabledStacks(Settings.SynthesisMachineBlacklist, Settings.synthesisBlacklist, registeredItems);
     }
 
+    @SideOnly(Side.CLIENT)
     public static int getSplitStringHeight(FontRenderer fontRenderer, String string, int width)
     {
-        List<?> stringRows = fontRenderer.listFormattedStringToWidth(string, width);
+        List<String> stringRows = fontRenderer.listFormattedStringToWidth(string, width);
         return stringRows.size() * fontRenderer.FONT_HEIGHT;
     }
 
@@ -438,7 +442,8 @@ public final class MinechemUtil
     {
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
         {
-            String localString = StatCollector.translateToLocal(key);
+            LanguageMap languageMap = new LanguageMap();
+            String localString = languageMap.translateKey(key);
             return capitalize ? capitalizeFully(localString.replaceAll("molecule\\.", "")) : localString;
         }
         return key;
@@ -664,33 +669,33 @@ public final class MinechemUtil
      * @param inv
      * @return Modified inventory if double chest, unmodified otherwise. Credit to Buildcraft.
      */
-    public static IInventory getInventory(IInventory inv)
+    public static IInventory getInventory(ILockableContainer inv)
     {
         if (inv instanceof TileEntityChest)
         {
             TileEntityChest chest = (TileEntityChest) inv;
-            Position pos = new Position(chest.xCoord, chest.yCoord, chest.zCoord);
+            Position pos = new Position(chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
             TileEntity tile;
-            IInventory chest2 = null;
-            tile = getTile(chest.getWorldObj(), pos, ForgeDirection.WEST);
+            ILockableContainer chest2 = null;
+            tile = getTile(chest.getWorld(), pos, EnumFacing.WEST);
             if (tile instanceof TileEntityChest)
             {
-                chest2 = (IInventory) tile;
+                chest2 = (ILockableContainer) tile;
             }
-            tile = getTile(chest.getWorldObj(), pos, ForgeDirection.EAST);
+            tile = getTile(chest.getWorld(), pos, EnumFacing.EAST);
             if (tile instanceof TileEntityChest)
             {
-                chest2 = (IInventory) tile;
+                chest2 = (ILockableContainer) tile;
             }
-            tile = getTile(chest.getWorldObj(), pos, ForgeDirection.NORTH);
+            tile = getTile(chest.getWorld(), pos, EnumFacing.NORTH);
             if (tile instanceof TileEntityChest)
             {
-                chest2 = (IInventory) tile;
+                chest2 = (ILockableContainer) tile;
             }
-            tile = getTile(chest.getWorldObj(), pos, ForgeDirection.SOUTH);
+            tile = getTile(chest.getWorld(), pos, EnumFacing.SOUTH);
             if (tile instanceof TileEntityChest)
             {
-                chest2 = (IInventory) tile;
+                chest2 = (ILockableContainer) tile;
             }
             if (chest2 != null)
             {
@@ -700,22 +705,22 @@ public final class MinechemUtil
         return inv;
     }
 
-    public static TileEntity getTile(World world, Position pos, ForgeDirection dir)
+    public static TileEntity getTile(World world, Position pos, EnumFacing dir)
     {
         Position tmp = new Position(pos);
         tmp.orientation = dir;
         tmp.moveForwards(1.0);
 
-        return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+        return world.getTileEntity(new BlockPos((int) tmp.x, (int) tmp.y, (int) tmp.z));
     }
 
     @SideOnly(Side.SERVER)
     public static WorldServer getDimension(int dimensionID)
     {
-        WorldServer[] worlds = FMLServerHandler.instance().getServer().worldServers;
+        WorldServer[] worlds = FMLServerHandler.instance().getServer().worlds;
         for (WorldServer world : worlds)
         {
-            if (world.provider.dimensionId == dimensionID)
+            if (world.provider.getDimension() == dimensionID)
             {
                 return world;
             }
