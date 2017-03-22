@@ -1,6 +1,5 @@
 package minechem.tileentity.multiblock.fission;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
 import minechem.MinechemItemsRegistration;
 import minechem.Settings;
 import minechem.item.blueprint.BlueprintFission;

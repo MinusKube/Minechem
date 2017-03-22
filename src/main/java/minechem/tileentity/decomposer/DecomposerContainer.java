@@ -66,7 +66,7 @@ public class DecomposerContainer extends Container implements IRadiationShield, 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer)
     {
-        return decomposer.isUseableByPlayer(entityPlayer);
+        return decomposer.isUsableByPlayer(entityPlayer);
     }
 
     @Override

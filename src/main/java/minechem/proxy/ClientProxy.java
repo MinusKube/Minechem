@@ -6,7 +6,7 @@ import minechem.fluid.MinechemFluid;
 import minechem.fluid.MinechemFluidBlock;
 import minechem.gui.GuiHandler;
 import minechem.item.bucket.MinechemBucketItem;
-import minechem.render.FluidItemRenderingHandler;
+//import minechem.render.FluidItemRenderingHandler;
 import minechem.sound.MinechemSoundEvent;
 import minechem.tileentity.blueprintprojector.BlueprintProjectorTileEntity;
 import minechem.tileentity.blueprintprojector.BlueprintProjectorTileEntityRenderer;

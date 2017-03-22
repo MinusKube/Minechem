@@ -1,12 +1,12 @@
 package minechem.tileentity.leadedchest;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.reference.Resources;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelChest;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -28,7 +28,7 @@ public class LeadedChestTileEntityRenderer extends TileEntitySpecialRenderer
         }
         int facing = 0;
 
-        if (leadedChest.hasWorldObj())
+        if (leadedChest.hasWorld())
         {
             Block var10 = leadedChest.getBlockType();
             facing = leadedChest.getBlockMetadata();
@@ -84,7 +84,7 @@ public class LeadedChestTileEntityRenderer extends TileEntitySpecialRenderer
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double xCoord, double yCoord, double zCoord, float partialTick)
+    public void renderTileEntityAt(TileEntity tileentity, double xCoord, double yCoord, double zCoord, float partialTick, int ii)
     {
         this.renderTileEntityLeadedChestAt((LeadedChestTileEntity) tileentity, xCoord, yCoord, zCoord, partialTick);
     }

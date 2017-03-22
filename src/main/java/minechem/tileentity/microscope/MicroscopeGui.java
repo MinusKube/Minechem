@@ -14,7 +14,7 @@ import minechem.tileentity.synthesis.SynthesisRecipeHandler;
 import minechem.utils.Constants;
 import minechem.utils.MinechemUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;

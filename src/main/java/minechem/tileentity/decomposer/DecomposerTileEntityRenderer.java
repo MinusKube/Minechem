@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
-public class DecomposerTileEntityRenderer extends TileEntitySpecialRenderer
+public class DecomposerTileEntityRenderer extends TileEntitySpecialRenderer<TileEntity>
 {
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float var8)
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float var8, int var9)
     {
         if (tileEntity instanceof DecomposerTileEntity)
         {

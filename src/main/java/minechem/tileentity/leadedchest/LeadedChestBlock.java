@@ -1,40 +1,46 @@
 package minechem.tileentity.leadedchest;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import minechem.Minechem;
 import minechem.gui.CreativeTabMinechem;
+import minechem.proxy.CommonProxy;
 import minechem.reference.Textures;
 import minechem.utils.MinechemUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class LeadedChestBlock extends BlockContainer
 {
 
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+
     public LeadedChestBlock()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         this.setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
         this.setHardness(2.0F);
         this.setResistance(5.0F);
-        this.setBlockName("leadChest");
+        this.setUnlocalizedName("leadChest");
     }
 
     @Override
-    public void breakBlock(World world, int xCoord, int yCoord, int zCoord, Block block, int metaData)
+    public void breakBlock(World world, BlockPos blockPos, IBlockState blockState)
     {
-        this.dropItems(world, xCoord, yCoord, zCoord);
-        super.onBlockDestroyedByPlayer(world, xCoord, yCoord, zCoord, metaData);
+        this.dropItems(world, blockPos);
+        super.onBlockDestroyedByPlayer(world, blockPos, blockState);
     }
 
     @Override
@@ -43,10 +49,10 @@ public class LeadedChestBlock extends BlockContainer
         return new LeadedChestTileEntity();
     }
 
-    private void dropItems(World world, int xCoord, int yCoord, int zCoord)
+    private void dropItems(World world, BlockPos blockPos)
     {
 
-        TileEntity te = world.getTileEntity(xCoord, yCoord, zCoord);
+        TileEntity te = world.getTileEntity(blockPos);
         if (te instanceof IInventory)
         {
             IInventory inventory = (IInventory) te;
@@ -54,76 +60,58 @@ public class LeadedChestBlock extends BlockContainer
             int invSize = inventory.getSizeInventory();
             for (int i = 0; i < invSize; i++)
             {
-                MinechemUtil.throwItemStack(world, inventory.getStackInSlot(i), xCoord, yCoord, zCoord);
+                MinechemUtil.throwItemStack(world, inventory.getStackInSlot(i), blockPos.getX(), blockPos.getY(), blockPos.getZ());
             }
         }
     }
 
     @Override
-    public int getRenderType()
-    {
-        return -1;
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, int xCoord, int yCoord, int zCoord, EntityPlayer player, int metadata, float par7, float par8, float par9)
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, EnumHand hand, ItemStack stack, EnumFacing facing, float par7, float par8, float par9)
     {
         if (!world.isRemote)
         {
-            LeadedChestTileEntity leadedChest = (LeadedChestTileEntity) world.getTileEntity(xCoord, yCoord, zCoord);
+            LeadedChestTileEntity leadedChest = (LeadedChestTileEntity) world.getTileEntity(blockPos);
             if (leadedChest == null || player.isSneaking())
             {
                 return false;
             }
-            player.openGui(Minechem.INSTANCE, 0, world, xCoord, yCoord, zCoord);
+            player.openGui(Minechem.INSTANCE, 0, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
         return true;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase el, ItemStack is)
+    public EnumBlockRenderType getRenderType(IBlockState state)
     {
-        byte facing = 0;
-        int facingI = MathHelper.floor_double(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+        return EnumBlockRenderType.values()[-1];
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase el, ItemStack is)
+    {
+        EnumFacing facing = null;
+        int facingI = MathHelper.floor(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
         if (facingI == 0)
         {
-            facing = 2;
+            facing = EnumFacing.NORTH;
         }
 
         if (facingI == 1)
         {
-            facing = 5;
+            facing = EnumFacing.EAST;
         }
 
         if (facingI == 2)
         {
-            facing = 3;
+            facing = EnumFacing.SOUTH;
         }
 
         if (facingI == 3)
         {
-            facing = 4;
+            facing = EnumFacing.WEST;
         }
-        world.setBlockMetadataWithNotify(x, y, z, facing, 2);
-    }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister ir)
-    {
-        blockIcon = ir.registerIcon(Textures.IIcon.LEADEDCHEST);
-    }
-
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
+        world.setBlockState(blockPos, state.withProperty(FACING, facing), 2);
     }
 }

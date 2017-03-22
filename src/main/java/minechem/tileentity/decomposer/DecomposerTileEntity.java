@@ -18,16 +18,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class DecomposerTileEntity extends MinechemTileEntityElectric implements ISidedInventory, IFluidHandler
@@ -114,7 +117,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     // Used for updates
     public boolean bufferChanged = false;
     public boolean tankUpdate = false;
-    private static ItemStack cheatTankStack = new ItemStack(Blocks.air);
+    private static ItemStack cheatTankStack = new ItemStack(Blocks.AIR);
 
     public DecomposerTileEntity()
     {
@@ -146,7 +149,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
                 return true;
             }
         }
-        itemstack.getItem().onCreated(itemstack, this.worldObj, null);
+        itemstack.getItem().onCreated(itemstack, this.world, null);
         for (int outputSlot : outputSlots)
         {
             ItemStack stackInSlot = getStackInSlot(outputSlot);
@@ -188,30 +191,17 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean canExtractItem(int i, ItemStack itemstack, int j)
+    public boolean canExtractItem(int i, ItemStack itemstack, EnumFacing j)
     {
         return true;
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean canInsertItem(int i, ItemStack itemstack, int j)
+    public boolean canInsertItem(int i, ItemStack itemstack, EnumFacing j)
     {
         return itemstack != null && DecomposerRecipeHandler.instance.getRecipe(itemstack) != null;
     }
 
-    @Override
     public void closeInventory()
     {
 
@@ -316,7 +306,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    public FluidStack drain(FluidStack resource, boolean doDrain)
     {
         if (resource == null || tank == null || resource.amount <= 0 || !tank.isFluidEqual(resource))
         {
@@ -337,7 +327,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+    public FluidStack drain(int maxDrain, boolean doDrain)
     {
         if (tank == null || maxDrain <= 0)
         {
@@ -362,7 +352,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
      * Expands the internal fluid storage array to keep as many different fluids as needed in order to decompose them properly.
      */
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
+    public int fill(FluidStack resource, boolean doFill)
     {
         if (tank!=null && tank.amount==0) tank=null;
         if (resource == null || (tank != null && !tank.isFluidEqual(resource)))
@@ -405,7 +395,6 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         return maxFill;
     }
 
-    @Override
     public int[] getAccessibleSlotsFromSide(int var1)
     {
 
@@ -447,7 +436,6 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         return activeStack;
     }
 
-    @Override
     public String getInventoryName()
     {
         return "container.decomposer";
@@ -457,6 +445,12 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     public int getSizeInventory()
     {
         return 19;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack removeStackFromSlot(int i) {
+        return null;
     }
 
     public int[] getSizeInventorySide(int side)
@@ -479,17 +473,11 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from)
+    public IFluidTankProperties[] getTankProperties()
     {
-        FluidTankInfo[] result = new FluidTankInfo[1];
-        result[0] = new FluidTankInfo(tank, capacity);
+        FluidTankProperties[] result = new FluidTankProperties[1];
+        result[0] = new FluidTankProperties(tank, capacity);
         return result;
-    }
-
-    @Override
-    public boolean hasCustomInventoryName()
-    {
-        return false;
     }
 
     /**
@@ -523,14 +511,22 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
-        return true;
+    public int getField(int i) {
+        return 0;
     }
 
     @Override
-    public void openInventory()
-    {
+    public void setField(int i, int i1) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
 
     }
 
@@ -646,6 +642,21 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         this.inventory[slot] = itemstack;
     }
 
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
+        return false;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer entityPlayer) {
+
+    }
+
+    @Override
+    public void closeInventory(EntityPlayer entityPlayer) {
+
+    }
+
     /**
      * Sets the current state of the machine using an integer to reference an enumeration.
      */
@@ -661,7 +672,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         super.updateEntity();
 
         // Prevents any code below this line from running on clients.
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             return;
         }
@@ -699,7 +710,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
             tankUpdate = false;
             // Notify minecraft that the inventory items in this machine have changed.
             DecomposerUpdateMessage message = new DecomposerUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, this.xCoord, this.yCoord, this.zCoord, Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -748,10 +759,45 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     public void dumpFluid()
     {
         this.tank = null;
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             MessageHandler.INSTANCE.sendToServer(new DecomposerDumpFluidMessage(this));
         }
+    }
+
+    @Override
+    public int receiveEnergy(EnumFacing enumFacing, int i, boolean b) {
+        return 0;
+    }
+
+    @Override
+    public int getEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(EnumFacing enumFacing) {
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectEnergy(EnumFacing enumFacing) {
+        return false;
+    }
+
+    @Override
+    public int[] getSlotsForFace(EnumFacing enumFacing) {
+        return new int[0];
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
     }
 
     /**
