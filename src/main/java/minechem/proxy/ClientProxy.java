@@ -33,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
-    public FluidItemRenderingHandler fluidItemRenderingHandler;
+    //public FluidItemRenderingHandler fluidItemRenderingHandler;
 
     @Override
     public void registerRenderers()
@@ -88,10 +88,10 @@ public class ClientProxy extends CommonProxy
     {
         super.onAddFluid(fluid, block);
 
-        if (fluidItemRenderingHandler == null)
+        /*if (fluidItemRenderingHandler == null)
         {
             fluidItemRenderingHandler = new FluidItemRenderingHandler();
-        }
+        }*/
         //MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(block), fluidItemRenderingHandler);
     }
 

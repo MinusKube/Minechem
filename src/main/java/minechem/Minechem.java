@@ -29,6 +29,7 @@ import minechem.utils.LogHelper;
 import minechem.utils.MinechemFuelHandler;
 import minechem.utils.MinechemUtil;
 import minechem.utils.Recipe;
+import minetweaker.MineTweakerAPI;
 import modtweaker.TweakerPlugin;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -156,14 +157,13 @@ public class Minechem
         LogHelper.debug("Registering Fuel Values...");
         MinechemItemsRegistration.registerFuelValues();
 
-        if (Loader.isModLoaded("ModTweaker2"))
+        if (Loader.isModLoaded("MineTweaker3"))
         {
-            LogHelper.debug("Loading ModTweaker Classes...");
-            TweakerPlugin.load(Reference.ID, this.getClass());
-            TweakerPlugin.register(Reference.ID, Chemicals.class);
-            TweakerPlugin.register(Reference.ID, Decomposer.class);
-            TweakerPlugin.register(Reference.ID, Synthesiser.class);
-            TweakerPlugin.register(Reference.ID, Fuels.class);
+            LogHelper.debug("Loading MineTweaker Classes...");
+            MineTweakerAPI.registerClass(Chemicals.class);
+            MineTweakerAPI.registerClass(Decomposer.class);
+            MineTweakerAPI.registerClass(Synthesiser.class);
+            MineTweakerAPI.registerClass(Fuels.class);
         }
     }
 

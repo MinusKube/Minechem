@@ -1,11 +1,9 @@
 package minechem.utils;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Optional;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
+
 import minechem.tileentity.decomposer.DecomposerRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -13,6 +11,8 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -83,7 +83,7 @@ public class Recipe
     {
         Map<MapKey, ArrayList<Recipe>> preCullRecipes = new Hashtable<MapKey, ArrayList<Recipe>>();
         recipes = new LinkedHashMap<MapKey, Recipe>();
-        smelting = FurnaceRecipes.smelting().getSmeltingList();
+        smelting = FurnaceRecipes.instance().getSmeltingList();
         List craftingRecipes = CraftingManager.getInstance().getRecipeList();
         if (Loader.isModLoaded("RotaryCraft"))
         {
