@@ -5,13 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 // Written by calclavia
 // Taken from UE for legacy code
@@ -51,28 +48,28 @@ public class Vector3 implements Cloneable
 
     public Vector3(TileEntity par1)
     {
-        this(par1.xCoord, par1.yCoord, par1.zCoord);
+        this(par1.getPos().getX(), par1.getPos().getY(), par1.getPos().getZ());
     }
 
-    public Vector3(Vec3 par1)
+    public Vector3(Vec3d par1)
     {
         this(par1.xCoord, par1.yCoord, par1.zCoord);
 
     }
 
-    public Vector3(MovingObjectPosition par1)
+    public Vector3(Position par1)
     {
-        this(par1.blockX, par1.blockY, par1.blockZ);
+        this(par1.x, par1.y, par1.z);
     }
 
-    public Vector3(ChunkCoordinates par1)
+    public Vector3(ChunkPos par1)
     {
-        this(par1.posX, par1.posY, par1.posZ);
+        this(par1.chunkXPos, 0, par1.chunkZPos);
     }
 
-    public Vector3(ForgeDirection direction)
+    public Vector3(EnumFacing direction)
     {
-        this(direction.offsetX, direction.offsetY, direction.offsetZ);
+        this(direction.getFrontOffsetX(), direction.getFrontOffsetY(), direction.getFrontOffsetZ());
     }
 
     /**
@@ -144,22 +141,22 @@ public class Vector3 implements Cloneable
      */
     public Block getBlock(IBlockAccess world)
     {
-        return world.getBlock(this.intX(), this.intY(), this.intZ());
+        return world.getBlockState(new BlockPos(this.intX(), this.intY(), this.intZ())).getBlock();
     }
 
     public int getBlockMetadata(IBlockAccess world)
     {
-        return world.getBlockMetadata(this.intX(), this.intY(), this.intZ());
+        return world.getBlockState(new BlockPos(this.intX(), this.intY(), this.intZ())).getBlock().getMetaFromState(world.getBlockState(new BlockPos(this.intX(), this.intY(), this.intZ())));
     }
 
     public TileEntity getTileEntity(IBlockAccess world)
     {
-        return world.getTileEntity(this.intX(), this.intY(), this.intZ());
+        return world.getTileEntity(new BlockPos(this.intX(), this.intY(), this.intZ()));
     }
 
     public boolean setBlock(World world, Block block, int metadata, int notify)
     {
-        return world.setBlock(this.intX(), this.intY(), this.intZ(), block, metadata, notify);
+        return world.setBlockState(new BlockPos(this.intX(), this.intY(), this.intZ()), block.getStateFromMeta(metadata), notify);
     }
 
     public boolean setBlock(World world, Block block, int metadata)
@@ -175,25 +172,25 @@ public class Vector3 implements Cloneable
     /**
      * Converts this vector three into a Minecraft Vec3 object
      */
-    public Vec3 toVec3()
+    public Vec3d toVec3()
     {
-        return Vec3.createVectorHelper(this.x, this.y, this.z);
+        return new Vec3d(this.x, this.y, this.z);
     }
 
     /**
      * Converts Vector3 into a ForgeDirection.
      */
-    public ForgeDirection toForgeDirection()
+    public EnumFacing toEnumFacing()
     {
-        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
+        for (EnumFacing direction : EnumFacing.HORIZONTALS)
         {
-            if (this.x == direction.offsetX && this.y == direction.offsetY && this.z == direction.offsetZ)
+            if (this.x == direction.getFrontOffsetX() && this.y == direction.getFrontOffsetY() && this.z == direction.getFrontOffsetZ())
             {
                 return direction;
             }
         }
 
-        return ForgeDirection.UNKNOWN;
+        return EnumFacing.values()[-1];
     }
 
     public double getMagnitude()
@@ -249,11 +246,11 @@ public class Vector3 implements Cloneable
         return this;
     }
 
-    public Vector3 translate(ForgeDirection par1)
+    public Vector3 translate(EnumFacing par1)
     {
-        this.x += par1.offsetX;
-        this.y += par1.offsetY;
-        this.z += par1.offsetZ;
+        this.x += par1.getFrontOffsetX();
+        this.y += par1.getFrontOffsetY();
+        this.z += par1.getFrontOffsetZ();
         return this;
     }
 
@@ -430,22 +427,21 @@ public class Vector3 implements Cloneable
      */
     public List<Entity> getEntitiesWithin(World worldObj, Class<? extends Entity> par1Class)
     {
-        return worldObj.getEntitiesWithinAABB(par1Class, AxisAlignedBB.getBoundingBox(this.intX(), this.intY(), this.intZ(), this.intX() + 1, this.intY() + 1, this.intZ() + 1));
+        return worldObj.getEntitiesWithinAABB(par1Class, new AxisAlignedBB(this.intX(), this.intY(), this.intZ(), this.intX() + 1, this.intY() + 1, this.intZ() + 1));
     }
 
     /**
      * Gets a position relative to a position's side
      *
-     * @param position - The position
      * @param side - The side. 0-5
      * @return The position relative to the original position's side
      */
-    public Vector3 modifyPositionFromSide(ForgeDirection side, double amount)
+    public Vector3 modifyPositionFromSide(EnumFacing side, double amount)
     {
         return this.translate(new Vector3(side).scale(amount));
     }
 
-    public Vector3 modifyPositionFromSide(ForgeDirection side)
+    public Vector3 modifyPositionFromSide(EnumFacing side)
     {
         this.modifyPositionFromSide(side, 1);
         return this;
@@ -648,7 +644,6 @@ public class Vector3 implements Cloneable
     /**
      * Saves this Vector3 to disk
      *
-     * @param prefix - The prefix of this save. Use some unique string.
      * @param nbt - The NBT compound object to save the data in
      */
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
@@ -694,11 +689,11 @@ public class Vector3 implements Cloneable
      *
      * @author MachineMuse
      */
-    public MovingObjectPosition rayTrace(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
+    public RayTraceResult rayTrace(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
     {
         // Somehow this destroys the playerPosition vector -.-
-        MovingObjectPosition pickedBlock = this.rayTraceBlocks(world, rotationYaw, rotationPitch, collisionFlag, reachDistance);
-        MovingObjectPosition pickedEntity = this.rayTraceEntities(world, rotationYaw, rotationPitch, reachDistance);
+        RayTraceResult pickedBlock = this.rayTraceBlocks(world, rotationYaw, rotationPitch, collisionFlag, reachDistance);
+        RayTraceResult pickedEntity = this.rayTraceEntities(world, rotationYaw, rotationPitch, reachDistance);
 
         if (pickedBlock == null)
         {
@@ -721,11 +716,11 @@ public class Vector3 implements Cloneable
         }
     }
 
-    public MovingObjectPosition rayTraceBlocks(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
+    public RayTraceResult rayTraceBlocks(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
     {
         Vector3 lookVector = Vector3.getDeltaPositionFromRotation(rotationYaw, rotationPitch);
         Vector3 reachPoint = this.clone().translate(lookVector.clone().scale(reachDistance));
-        return world.func_147447_a(this.toVec3(), reachPoint.toVec3(), collisionFlag, !collisionFlag, false);
+        return world.rayTraceBlocks(this.toVec3(), reachPoint.toVec3(), collisionFlag, !collisionFlag, false);
     }
 
     private Vector3 translate(Vector3 scale)
@@ -734,12 +729,12 @@ public class Vector3 implements Cloneable
     }
 
     @Deprecated
-    public MovingObjectPosition rayTraceEntities(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
+    public RayTraceResult rayTraceEntities(World world, float rotationYaw, float rotationPitch, boolean collisionFlag, double reachDistance)
     {
         return this.rayTraceEntities(world, rotationYaw, rotationPitch, reachDistance);
     }
 
-    public MovingObjectPosition rayTraceEntities(World world, float rotationYaw, float rotationPitch, double reachDistance)
+    public RayTraceResult rayTraceEntities(World world, float rotationYaw, float rotationPitch, double reachDistance)
     {
         return this.rayTraceEntities(world, getDeltaPositionFromRotation(rotationYaw, rotationPitch).scale(reachDistance));
     }
@@ -751,16 +746,16 @@ public class Vector3 implements Cloneable
      * @param target - The rotation in terms of Vector3. Convert using getDeltaPositionFromRotation()
      * @return The target hit.
      */
-    public MovingObjectPosition rayTraceEntities(World world, Vector3 target)
+    public RayTraceResult rayTraceEntities(World world, Vector3 target)
     {
-        MovingObjectPosition pickedEntity = null;
-        Vec3 startingPosition = this.toVec3();
-        Vec3 look = target.toVec3();
+        RayTraceResult pickedEntity = null;
+        Vec3d startingPosition = this.toVec3();
+        Vec3d look = target.toVec3();
         double reachDistance = this.distance(target);
-        Vec3 reachPoint = Vec3.createVectorHelper(startingPosition.xCoord + look.xCoord * reachDistance, startingPosition.yCoord + look.yCoord * reachDistance, startingPosition.zCoord + look.zCoord * reachDistance);
+        Vec3d reachPoint = new Vec3d(startingPosition.xCoord + look.xCoord * reachDistance, startingPosition.yCoord + look.yCoord * reachDistance, startingPosition.zCoord + look.zCoord * reachDistance);
 
         double checkBorder = 1.1 * reachDistance;
-        AxisAlignedBB boxToScan = AxisAlignedBB.getBoundingBox(-checkBorder, -checkBorder, -checkBorder, checkBorder, checkBorder, checkBorder).offset(this.x, this.y, this.z);
+        AxisAlignedBB boxToScan = new AxisAlignedBB(-checkBorder, -checkBorder, -checkBorder, checkBorder, checkBorder, checkBorder).offset(this.x, this.y, this.z);
 
         @SuppressWarnings("unchecked")
         List<Entity> entitiesHit = world.getEntitiesWithinAABBExcludingEntity(null, boxToScan);
@@ -772,11 +767,11 @@ public class Vector3 implements Cloneable
         }
         for (Entity entityHit : entitiesHit)
         {
-            if (entityHit != null && entityHit.canBeCollidedWith() && entityHit.boundingBox != null)
+            if (entityHit != null && entityHit.canBeCollidedWith() && entityHit.getCollisionBoundingBox() != null)
             {
                 float border = entityHit.getCollisionBorderSize();
-                AxisAlignedBB aabb = entityHit.boundingBox.expand(border, border, border);
-                MovingObjectPosition hitMOP = aabb.calculateIntercept(startingPosition, reachPoint);
+                AxisAlignedBB aabb = entityHit.getCollisionBoundingBox().expand(border, border, border);
+                RayTraceResult hitMOP = aabb.calculateIntercept(startingPosition, reachPoint);
 
                 if (hitMOP != null)
                 {
@@ -784,7 +779,7 @@ public class Vector3 implements Cloneable
                     {
                         if (0.0D < closestEntity || closestEntity == 0.0D)
                         {
-                            pickedEntity = new MovingObjectPosition(entityHit);
+                            pickedEntity = new RayTraceResult(entityHit);
                             pickedEntity.hitVec = hitMOP.hitVec;
                             closestEntity = 0.0D;
                         }
@@ -794,7 +789,7 @@ public class Vector3 implements Cloneable
 
                         if (distance < closestEntity || closestEntity == 0.0D)
                         {
-                            pickedEntity = new MovingObjectPosition(entityHit);
+                            pickedEntity = new RayTraceResult(entityHit);
                             pickedEntity.hitVec = hitMOP.hitVec;
                             closestEntity = distance;
                         }
