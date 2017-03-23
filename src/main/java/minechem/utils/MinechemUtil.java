@@ -410,9 +410,9 @@ public final class MinechemUtil
         Settings.decomposerBlacklist.add(MinechemItemsRegistration.emptyTube);
 
         ArrayList<String> registeredItems = new ArrayList<String>();
-        for (Object key : GameData.getItemRegistry().getKeys())
+        for (ResourceLocation key : GameData.getItemRegistry().getKeys())
         {
-            registeredItems.add((String) key);
+            registeredItems.add(key.toString());
         }
         addDisabledStacks(Settings.DecomposerBlacklist, Settings.decomposerBlacklist, registeredItems);
         addDisabledStacks(Settings.SynthesisMachineBlacklist, Settings.synthesisBlacklist, registeredItems);

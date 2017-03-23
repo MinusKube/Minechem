@@ -30,6 +30,7 @@ public class ChemistJournalItem extends Item
     public ChemistJournalItem()
     {
         setUnlocalizedName("itemChemistJournal");
+        setRegistryName("itemChemistJournal");
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
     }
 

@@ -1,7 +1,5 @@
 package minechem;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import minechem.fluid.FluidHelper;
 import minechem.item.blueprint.ItemBlueprint;
 import minechem.item.blueprint.MinechemBlueprint;
@@ -28,6 +26,7 @@ import minechem.tileentity.decomposer.DecomposerRecipeSelect;
 import minechem.tileentity.decomposer.DecomposerRecipeSuper;
 import minechem.tileentity.synthesis.SynthesisRecipe;
 import minechem.utils.Compare;
+import minechem.utils.LogHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.init.Blocks;
@@ -41,6 +40,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 @SuppressWarnings("RedundantArrayCreation")
 public class MinechemRecipes
@@ -3044,6 +3046,16 @@ public class MinechemRecipes
         ItemStack itemRedstone = new ItemStack(Items.REDSTONE);
         ItemStack minechemItemsAtomicManipulator = new ItemStack(MinechemItemsRegistration.atomicManipulator);
         ItemStack moleculePolyvinylChloride = new ItemStack(MinechemItemsRegistration.molecule, 1, MoleculeEnum.polyvinylChloride.id());
+
+        LogHelper.debug("------------------------");
+        LogHelper.debug(MinechemBlocksGeneration.decomposer);
+        LogHelper.debug(MinechemBlocksGeneration.decomposer.delegate);
+
+        if(MinechemBlocksGeneration.decomposer.delegate != null)
+            LogHelper.debug(MinechemBlocksGeneration.decomposer.delegate.get());
+
+        LogHelper.debug(new ItemStack(MinechemBlocksGeneration.decomposer).getItem());
+        LogHelper.debug("------------------------");
 
         GameRegistry.addRecipe(MinechemItemsRegistration.concaveLens, new Object[]
         {

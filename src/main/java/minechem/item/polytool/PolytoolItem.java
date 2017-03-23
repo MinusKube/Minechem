@@ -43,6 +43,7 @@ public class PolytoolItem extends ItemPickaxe
         instance = this;
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
         setUnlocalizedName("Polytool");
+        setRegistryName("Polytool");
     }
 
     public static boolean validAlloyInfusion(ItemStack polytool, ItemStack element)

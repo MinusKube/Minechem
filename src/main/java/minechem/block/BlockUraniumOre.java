@@ -1,7 +1,6 @@
 package minechem.block;
 
 import minechem.gui.CreativeTabMinechem;
-import minechem.reference.Textures;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 

@@ -30,7 +30,6 @@ import minechem.utils.MinechemFuelHandler;
 import minechem.utils.MinechemUtil;
 import minechem.utils.Recipe;
 import minetweaker.MineTweakerAPI;
-import modtweaker.TweakerPlugin;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
@@ -197,8 +196,9 @@ public class Minechem
         if(event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON)) {
             LogHelper.debug("Adding blueprints to dungeon loot...");
             LootTable table = event.getTable();
-            table.getPool("pool0").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 0, new LootFunction[0], new LootCondition[0], ""));
-            table.getPool("pool0").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 1, new LootFunction[0], new LootCondition[0], ""));
+
+            table.getPool("main").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 0, new LootFunction[0], new LootCondition[0], "blueprint1"));
+            table.getPool("main").addEntry(new LootEntryItem(MinechemItemsRegistration.blueprint, 1, 1, new LootFunction[0], new LootCondition[0], "blueprint2"));
         }
     }
 

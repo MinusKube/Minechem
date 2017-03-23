@@ -2,8 +2,6 @@ package minechem.tileentity.leadedchest;
 
 import minechem.Minechem;
 import minechem.gui.CreativeTabMinechem;
-import minechem.proxy.CommonProxy;
-import minechem.reference.Textures;
 import minechem.utils.MinechemUtil;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
@@ -34,6 +32,7 @@ public class LeadedChestBlock extends BlockContainer
         this.setHardness(2.0F);
         this.setResistance(5.0F);
         this.setUnlocalizedName("leadChest");
+        this.setRegistryName("leadChest");
     }
 
     @Override

@@ -24,6 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialTransparent;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -44,44 +45,53 @@ public class MinechemBlocksGeneration
 
     public static void registerBlocks()
     {
+
         // Decomposer
         decomposer = new DecomposerBlock();
-        GameRegistry.registerBlock(decomposer, decomposer.getUnlocalizedName());
+        GameRegistry.register(decomposer);
+        GameRegistry.register(new ItemBlock(decomposer).setRegistryName(decomposer.getRegistryName()));
         GameRegistry.registerTileEntity(DecomposerTileEntity.class, decomposer.getUnlocalizedName());
 
         // Microscope.
         microscope = new MicroscopeBlock();
-        GameRegistry.registerBlock(microscope, microscope.getUnlocalizedName());
+        GameRegistry.register(microscope);
+        GameRegistry.register(new ItemBlock(microscope).setRegistryName(microscope.getRegistryName()));
         GameRegistry.registerTileEntity(MicroscopeTileEntity.class, microscope.getUnlocalizedName());
 
         // Chemical Synthesis Machine.
         synthesis = new SynthesisBlock();
-        GameRegistry.registerBlock(synthesis, synthesis.getUnlocalizedName());
+        GameRegistry.register(synthesis);
+        GameRegistry.register(new ItemBlock(synthesis).setRegistryName(synthesis.getRegistryName()));
         GameRegistry.registerTileEntity(SynthesisTileEntity.class, synthesis.getUnlocalizedName());
 
         // Fusion Reactor.
         fusion = new FusionBlock();
-        GameRegistry.registerBlock(fusion, FusionItemBlock.class, fusion.getUnlocalizedName());
+        GameRegistry.register(fusion);
+        GameRegistry.register(new FusionItemBlock(fusion).setRegistryName(fusion.getRegistryName()));
         GameRegistry.registerTileEntity(FusionTileEntity.class, fusion.getUnlocalizedName());
 
         // Ghost Block.
         ghostBlock = new GhostBlock();
-        GameRegistry.registerBlock(ghostBlock, GhostBlockItem.class, ghostBlock.getUnlocalizedName());
+        GameRegistry.register(ghostBlock);
+        GameRegistry.register(new GhostBlockItem(ghostBlock).setRegistryName(ghostBlock.getRegistryName()));
         GameRegistry.registerTileEntity(GhostBlockTileEntity.class, ghostBlock.getUnlocalizedName());
 
         // Blueprint Projector.
         blueprintProjector = new BlueprintProjectorBlock();
-        GameRegistry.registerBlock(blueprintProjector, blueprintProjector.getUnlocalizedName());
+        GameRegistry.register(blueprintProjector);
+        GameRegistry.register(new ItemBlock(blueprintProjector).setRegistryName(blueprintProjector.getRegistryName()));
         GameRegistry.registerTileEntity(BlueprintProjectorTileEntity.class, blueprintProjector.getUnlocalizedName());
 
         // Uranium Ore (World Gen).
         uranium = new BlockUraniumOre();
-        GameRegistry.registerBlock(uranium, uranium.getUnlocalizedName());
+        GameRegistry.register(uranium);
+        GameRegistry.register(new ItemBlock(uranium).setRegistryName(uranium.getRegistryName()));
         OreDictionary.registerOre("oreUranium", new ItemStack(uranium));
 
         // Leaded Chest (for storing radioactive isotopes).
         leadChest = new LeadedChestBlock();
-        GameRegistry.registerBlock(leadChest, leadChest.getUnlocalizedName());
+        GameRegistry.register(leadChest);
+        GameRegistry.register(new ItemBlock(leadChest).setRegistryName(leadChest.getRegistryName()));
         GameRegistry.registerTileEntity(LeadedChestTileEntity.class, leadChest.getUnlocalizedName());
 
         // Fission Reactor.

@@ -59,6 +59,7 @@ public class ElementItem extends Item
     {
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ELEMENTS);
         setUnlocalizedName("itemElement");
+        setRegistryName("itemElement");
         setHasSubtypes(true);
         classificationIndexes.put(ElementClassificationEnum.nonmetal, 0);
         classificationIndexes.put(ElementClassificationEnum.halogen, 1);

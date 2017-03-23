@@ -10,18 +10,13 @@ import minechem.item.element.ElementItem;
 import minechem.item.molecule.MoleculeEnum;
 import minechem.item.molecule.MoleculeItem;
 import minechem.item.polytool.PolytoolItem;
-import minechem.reference.Reference;
 import minechem.utils.MinechemFuelHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.storage.loot.*;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-
-import java.io.File;
 
 public class MinechemItemsRegistration
 {
@@ -42,29 +37,29 @@ public class MinechemItemsRegistration
     public static void init()
     {
         element = new ElementItem();
-        GameRegistry.registerItem(element, Reference.ID + "Element");
+        GameRegistry.register(element);
 
         molecule = new MoleculeItem();
-        GameRegistry.registerItem(molecule, Reference.ID + "Molecule");
+        GameRegistry.register(molecule);
 
         lens = new OpticalMicroscopeLens();
+        GameRegistry.register(lens);
         concaveLens = new ItemStack(lens, 1, 0);
         convexLens = new ItemStack(lens, 1, 1);
         microscopeLens = new ItemStack(lens, 1, 2);
         projectorLens = new ItemStack(lens, 1, 3);
-        GameRegistry.registerItem(lens, Reference.ID + "OpticalMicroscopeLens");
 
         atomicManipulator = new ItemAtomicManipulator();
-        GameRegistry.registerItem(atomicManipulator, Reference.ID + "AtomicManipulator");
+        GameRegistry.register(atomicManipulator);
 
         blueprint = new ItemBlueprint();
-        GameRegistry.registerItem(blueprint, Reference.ID + "Blueprint");
+        GameRegistry.register(blueprint);
 
         journal = new ChemistJournalItem();
-        GameRegistry.registerItem(journal, Reference.ID + "Journal");
+        GameRegistry.register(journal);
 
         polytool = new PolytoolItem();
-        GameRegistry.registerItem(polytool, Reference.ID + "Polytool");
+        GameRegistry.register(polytool);
 
         emptyTube = new ItemStack(MinechemItemsRegistration.element, 1, 0);
     }
@@ -76,7 +71,8 @@ public class MinechemItemsRegistration
             if (element != null)
             {
                 ItemStack tube = new ItemStack(MinechemItemsRegistration.element, 1, element.atomicNumber());
-                FluidContainerRegistry.registerFluidContainer(new FluidStack(FluidHelper.elements.get(element), 125), tube, emptyTube);
+
+                //FluidContainerRegistry.registerFluidContainer(new FluidStack(FluidHelper.elements.get(element), 125), tube, emptyTube);
             }
         }
 
@@ -90,7 +86,7 @@ public class MinechemItemsRegistration
                 {
                     fluidStack = new FluidStack(FluidHelper.molecules.get(molecule), 125);
                 }
-                FluidContainerRegistry.registerFluidContainer(fluidStack, tube, emptyTube);
+                //FluidContainerRegistry.registerFluidContainer(fluidStack, tube, emptyTube);
             }
         }
     }

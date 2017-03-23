@@ -16,6 +16,7 @@ public class ItemAtomicManipulator extends Item
     {
         setCreativeTab(CreativeTabMinechem.CREATIVE_TAB_ITEMS);
         setUnlocalizedName("itemAtomicManipulator");
+        setRegistryName("itemAtomicManipulator");
         setHasSubtypes(true);
     }
 
