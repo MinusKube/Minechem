@@ -26,11 +26,11 @@ public class GhostBlockTileEntity extends MinechemTileEntity
 
         BlueprintBlock bp = blueprint.getBlockLookup().get(this.blockID);
 
-        this.world.setBlockState(pos, bp.block.getStateFromMeta(bp.metadata), 3);
-        if (world != null && !world.isRemote)
+        this.worldObj.setBlockState(pos, bp.block.getStateFromMeta(bp.metadata), 3);
+        if (worldObj != null && !worldObj.isRemote)
         {
             GhostBlockMessage message = new GhostBlockMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -146,7 +146,7 @@ public class GhostBlockTileEntity extends MinechemTileEntity
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityplayer)
+    public boolean isUseableByPlayer(EntityPlayer entityplayer)
     {
         return false;
     }

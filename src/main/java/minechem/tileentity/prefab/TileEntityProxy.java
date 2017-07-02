@@ -61,9 +61,9 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
         managerXOffset = nbtTagCompound.getInteger("managerXOffset");
         managerYOffset = nbtTagCompound.getInteger("managerYOffset");
         managerZOffset = nbtTagCompound.getInteger("managerZOffset");
-        if (world != null)
+        if (worldObj != null)
         {
-            manager = world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+            manager = worldObj.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
         }
 
     }
@@ -83,14 +83,14 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     public TileEntity getManager()
     {
         // Return the next block in sequence but never the TileEntityProxy.
-        if (world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) != null
-                && !(world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) instanceof TileEntityProxy))
+        if (worldObj.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) != null
+                && !(worldObj.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) instanceof TileEntityProxy))
         {
-            return world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+            return worldObj.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
         }
 
         // Return the entire fusion generator as a whole (indicating the structure is complete).
-        if (world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) == MinechemBlocksGeneration.fusion)
+        if (worldObj.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset)) == MinechemBlocksGeneration.fusion)
         {
             this.manager = buildManagerBlock();
             return this.manager;
@@ -102,32 +102,32 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
 
     private TileEntity buildManagerBlock()
     {
-        IBlockState state = this.world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+        IBlockState state = this.worldObj.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
 
         if (state.getBlock().getMetaFromState(state) == 2)
         {
             FusionTileEntity fusion = new FusionTileEntity();
-            fusion.setWorld(this.world);
+            fusion.setWorldObj(this.worldObj);
             fusion.setPos(new BlockPos(this.managerXOffset + pos.getX(),
                     this.managerYOffset + pos.getY(),
                     this.managerZOffset + pos.getZ()));
 
             fusion.setBlockType(MinechemBlocksGeneration.fusion);
-            world.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fusion);
+            worldObj.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fusion);
         }
 
-        state = this.world.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+        state = this.worldObj.getBlockState(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
         if (state.getBlock().getMetaFromState(state) == 3)
         {
             FissionTileEntity fission = new FissionTileEntity();
-            fission.setWorld(this.world);
+            fission.setWorldObj(this.worldObj);
             fission.setPos(new BlockPos(this.managerXOffset + pos.getX(),
                     this.managerYOffset + pos.getY(),
                     this.managerZOffset + pos.getZ()));
             fission.setBlockType(MinechemBlocksGeneration.fusion);
-            world.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fission);
+            worldObj.setTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset), fission);
         }
-        return world.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
+        return worldObj.getTileEntity(new BlockPos(pos.getX() + managerXOffset, pos.getY() + managerYOffset, pos.getZ() + managerZOffset));
 
     }
 
@@ -203,7 +203,7 @@ public class TileEntityProxy extends MinechemTileEntityElectric implements ISide
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
     {
         return false;
     }

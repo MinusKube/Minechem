@@ -67,8 +67,8 @@ public class MicroscopeRenderGUIItem extends RenderItem
         {
             GL11.glPushMatrix();
             setScissor(microscopeGui.eyepieceX, microscopeGui.eyepieceY, 52, 52);
-            int renderX = microscopeGui.getGuiLeft() + slot.xPos;
-            int renderY = microscopeGui.getGuiTop() + slot.yPos;
+            int renderX = microscopeGui.getGuiLeft() + slot.xDisplayPosition;
+            int renderY = microscopeGui.getGuiTop() + slot.yDisplayPosition;
             GL11.glTranslatef(renderX, renderY, 0.0F);
             GL11.glScalef(3.0F, 3.0F, 1.0F);
             GL11.glTranslatef(-renderX - 5.3F, -renderY - 5.3F, 2.0F);

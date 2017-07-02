@@ -132,7 +132,7 @@ public class ChemistJournalGui extends GuiContainerTabbed implements IVerticalSc
         // only leave GUI when ESC is pressed
         if (keyCode == 1)
         {
-            this.mc.player.closeScreen();
+            this.mc.thePlayer.closeScreen();
         }
         searchBar.keyTyped(character, keyCode);
         populateItemList();

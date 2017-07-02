@@ -144,7 +144,7 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
     {
         return completeStructure;
     }
@@ -193,7 +193,7 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
         {
             return;
         }
-        if (!world.isRemote)
+        if (!worldObj.isRemote)
         {
             if (!canProcess)
             {
@@ -212,7 +212,7 @@ public class FusionTileEntity extends MultiBlockTileEntity implements ISidedInve
                 fusedResult = 0;
             }
             FusionUpdateMessage message = new FusionUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), Settings.UpdateRadius));
         }
     }
 

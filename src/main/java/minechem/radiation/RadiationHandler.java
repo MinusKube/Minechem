@@ -69,9 +69,9 @@ public class RadiationHandler
             {
                 if (itemstack != null && (itemstack.getItem() == MinechemItemsRegistration.molecule || itemstack.getItem() == MinechemItemsRegistration.element || itemstack.getItem() instanceof MinechemBucketItem) && RadiationInfo.getRadioactivity(itemstack) != RadiationEnum.stable)
                 {
-                    RadiationInfo radiationInfo = ElementItem.getRadiationInfo(itemstack, player.world);
-                    radiationInfo.decayStarted += player.world.getTotalWorldTime() - radiationInfo.lastDecayUpdate;
-                    radiationInfo.lastDecayUpdate = player.world.getTotalWorldTime();
+                    RadiationInfo radiationInfo = ElementItem.getRadiationInfo(itemstack, player.worldObj);
+                    radiationInfo.decayStarted += player.worldObj.getTotalWorldTime() - radiationInfo.lastDecayUpdate;
+                    radiationInfo.lastDecayUpdate = player.worldObj.getTotalWorldTime();
                     RadiationInfo.setRadiationInfo(radiationInfo, itemstack);
                 }
             }
@@ -79,7 +79,7 @@ public class RadiationHandler
         List<ItemStack> playerStacks = container.getPlayerInventory();
         if (playerStacks != null)
         {
-            updateRadiationOnItems(player.world, player, openContainer, inventory, playerStacks);
+            updateRadiationOnItems(player.worldObj, player, openContainer, inventory, playerStacks);
         }
     }
 
@@ -87,7 +87,7 @@ public class RadiationHandler
     private void updateContainer(EntityPlayer player, Container container, IInventory inventory)
     {
         List<ItemStack> itemstacks = container.getInventory();
-        updateRadiationOnItems(player.world, player, container, inventory, itemstacks);
+        updateRadiationOnItems(player.worldObj, player, container, inventory, itemstacks);
     }
 
     private void updateRadiationOnItems(World world, EntityPlayer player, Container container, IInventory inventory, List<ItemStack> itemstacks)
@@ -173,7 +173,7 @@ public class RadiationHandler
             String nameAfterDecay = getLongName(e.getAfter());
             String time = TimeHelper.getTimeFromTicks(e.getTime());
             String message = String.format("Radiation Warning: Element %s decayed into %s after %s.", nameBeforeDecay, nameAfterDecay, time);
-            e.getPlayer().sendMessage(new TextComponentString(message));
+            e.getPlayer().addChatMessage(new TextComponentString(message));
         }
     }
 

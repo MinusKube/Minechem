@@ -89,7 +89,7 @@ public class LeadedChestBlock extends BlockContainer
     public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase el, ItemStack is)
     {
         EnumFacing facing = null;
-        int facingI = MathHelper.floor(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+        int facingI = MathHelper.floor_double(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
         if (facingI == 0)
         {

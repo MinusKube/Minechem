@@ -90,7 +90,7 @@ public class MoleculeItem extends Item
         String timeLeft = "";
         if (RadiationInfo.getRadioactivity(itemstack) != RadiationEnum.stable && itemstack.getTagCompound() != null)
         {
-            long worldTime = player.world.getTotalWorldTime();
+            long worldTime = player.worldObj.getTotalWorldTime();
             timeLeft = TimeHelper.getTimeFromTicks(RadiationInfo.getRadioactivity(itemstack).getLife() - (worldTime - itemstack.getTagCompound().getLong("decayStart")));
         }
         list.add(radioactivityColor + radioactiveName + (timeLeft.equals("") ? "" : " (" + timeLeft + ")"));

@@ -346,7 +346,7 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
      */
     public int getFacing()
     {
-        return world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
+        return worldObj.getBlockState(pos).getBlock().getMetaFromState(worldObj.getBlockState(pos));
     }
 
     @Override
@@ -386,10 +386,10 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
     {
         double dist = entityPlayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-        return world.getTileEntity(pos) != this ? false : dist <= 64.0D;
+        return worldObj.getTileEntity(pos) != this ? false : dist <= 64.0D;
     }
 
     @Override
@@ -490,7 +490,7 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
     {
         super.update();
 
-        if (!world.isRemote)
+        if (!worldObj.isRemote)
         {
             updateHandler();
         }
@@ -522,7 +522,7 @@ public class SynthesisTileEntity extends MinechemTileEntityElectric implements I
         {
             oldEnergyStored = energyStored;
             SynthesisUpdateMessage message = new SynthesisUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.getPos().getY(), this.getPos().getZ(), Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), this.pos.getX(), this.getPos().getY(), this.getPos().getZ(), Settings.UpdateRadius));
         }
     }
 

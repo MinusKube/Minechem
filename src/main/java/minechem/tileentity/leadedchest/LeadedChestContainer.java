@@ -38,7 +38,7 @@ public class LeadedChestContainer extends Container implements INoDecay
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer)
     {
-        return this.leadedchest.isUsableByPlayer(entityplayer);
+        return this.leadedchest.isUseableByPlayer(entityplayer);
     }
 
     private void bindPlayerInventory(InventoryPlayer inventoryPlayer)

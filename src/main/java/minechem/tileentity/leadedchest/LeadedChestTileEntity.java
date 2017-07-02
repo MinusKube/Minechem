@@ -96,9 +96,9 @@ public class LeadedChestTileEntity extends TileEntity implements IInventory
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player)
+    public boolean isUseableByPlayer(EntityPlayer player)
     {
-        return world.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
+        return worldObj.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
     }
 
     @Override

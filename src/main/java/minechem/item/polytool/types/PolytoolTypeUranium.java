@@ -22,7 +22,7 @@ public class PolytoolTypeUranium extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        List targets = target.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(target.posX - power, target.posY - power, target.posZ - power, target.posX + power, target.posY + power, target.posZ + power));
+        List targets = target.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(target.posX - power, target.posY - power, target.posZ - power, target.posX + power, target.posY + power, target.posZ + power));
         Iterator iter = targets.iterator();
         while (iter.hasNext())
         {

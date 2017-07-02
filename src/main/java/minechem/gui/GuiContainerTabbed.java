@@ -68,7 +68,7 @@ public abstract class GuiContainerTabbed extends GuiMinechemContainer implements
         tessellator.addVertexWithUV(x + w, y + h, this._zLevel, 1D, 1D);
         tessellator.addVertexWithUV(x + w, y + 0, this._zLevel, 1D, 0D);
         tessellator.addVertexWithUV(x + 0, y + 0, this._zLevel, 0D, 0D);*/
-        tessellator.draw();
+        //tessellator.draw();
     }
 
     public GuiContainerTabbed(Container container)

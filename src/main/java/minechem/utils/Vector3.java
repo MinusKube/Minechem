@@ -1,14 +1,19 @@
 package minechem.utils;
 
-import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 // Written by calclavia
 // Taken from UE for legacy code
@@ -425,9 +430,9 @@ public class Vector3 implements Cloneable
     /**
      * Gets all entities inside of this position in block space.
      */
-    public List<Entity> getEntitiesWithin(World worldObj, Class<? extends Entity> par1Class)
+    public List<Entity> getEntitiesWithin(World world, Class<? extends Entity> par1Class)
     {
-        return worldObj.getEntitiesWithinAABB(par1Class, new AxisAlignedBB(this.intX(), this.intY(), this.intZ(), this.intX() + 1, this.intY() + 1, this.intZ() + 1));
+        return world.getEntitiesWithinAABB(par1Class, new AxisAlignedBB(this.intX(), this.intY(), this.intZ(), this.intX() + 1, this.intY() + 1, this.intZ() + 1));
     }
 
     /**

@@ -15,7 +15,7 @@ public class PolytoolTypePhosphorus extends PolytoolUpgradeType
     @Override
     public void onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase target)
     {
-        if (!target.world.isRemote)
+        if (!target.worldObj.isRemote)
         {
             if (block.isFlammable(world, new BlockPos(x, y, z), EnumFacing.UP))
             {

@@ -48,7 +48,7 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
         {
             return;
         }
-        if (!world.isRemote)
+        if (!worldObj.isRemote)
         {
             if (inventory[kStartInput] != null)
             {
@@ -63,7 +63,7 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
                 }
             }
             FissionUpdateMessage message = new FissionUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -156,7 +156,7 @@ public class FissionTileEntity extends MultiBlockTileEntity implements ISidedInv
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
     {
         return completeStructure;
 

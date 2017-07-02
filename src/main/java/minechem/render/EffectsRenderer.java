@@ -21,7 +21,7 @@ public class EffectsRenderer
         Minecraft mc = FMLClientHandler.instance().getClient();
 //        if (mc.isSingleplayer())
 //        {
-        EntityPlayer player = mc.player;
+        EntityPlayer player = mc.thePlayer;
         if (player != null && player.isPotionActive(PotionInjector.atropineHigh))
         {
             PotionEffect DHigh = player.getActivePotionEffect(PotionInjector.atropineHigh);
@@ -33,13 +33,13 @@ public class EffectsRenderer
 
 
     /* // this is all unused code for a WIP gas system private void renderOverlays(float parialTickTime) { Minecraft mc = FMLClientHandler.instance().getClient(); if (mc.renderViewEntity != null && mc.gameSettings.thirdPersonView == 0 &&
-     * !mc.renderViewEntity.isPlayerSleeping() && mc.thePlayer.isInsideOfMaterial(MinechemBlocks.materialGas)) { renderWarpedTextureOverlay(mc, new ResourceLocation(ModMinechem.ID,"/misc/water.png")); } }
+     * !mc.renderViewEntity.isPlayerSleeping() && mc.player.isInsideOfMaterial(MinechemBlocks.materialGas)) { renderWarpedTextureOverlay(mc, new ResourceLocation(ModMinechem.ID,"/misc/water.png")); } }
      *
      *
      * // Renders a texture that warps around based on the direction the player is looking. Texture needs to be bound before being called. Used for the water // overlay. Args: parialTickTime
      *
-     * private void renderWarpedTextureOverlay(Minecraft mc, ResourceLocation texture) { int overlayTexture = mc.renderEngine.func_110581_b(texture).func_110552_b(); double tile = 4.0F; double yaw = -mc.thePlayer.rotationYaw / 64.0F; double pitch =
-     * mc.thePlayer.rotationPitch / 64.0F; double left = 0; double top = 0; double right = mc.displayWidth; double bot = mc.displayHeight; double z = -1; Tessellator ts = Tessellator.instance;
+     * private void renderWarpedTextureOverlay(Minecraft mc, ResourceLocation texture) { int overlayTexture = mc.renderEngine.func_110581_b(texture).func_110552_b(); double tile = 4.0F; double yaw = -mc.player.rotationYaw / 64.0F; double pitch =
+     * mc.player.rotationPitch / 64.0F; double left = 0; double top = 0; double right = mc.displayWidth; double bot = mc.displayHeight; double z = -1; Tessellator ts = Tessellator.instance;
      *
      * GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.9F); GL11.glDisable(GL11.GL_ALPHA_TEST); GL11.glEnable(GL11.GL_BLEND); GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA); GL11.glBindTexture(GL11.GL_TEXTURE_2D, overlayTexture); GL11.glPushMatrix();
      *

@@ -51,7 +51,7 @@ public class FusionUpdateMessage implements IMessage, IMessageHandler<FusionUpda
     @Override
     public IMessage onMessage(FusionUpdateMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof FusionTileEntity)
         {
             ((FusionTileEntity) tileEntity).syncEnergyValue(message.energyStored);

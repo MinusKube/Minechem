@@ -55,7 +55,7 @@ public class GhostBlockMessage implements IMessage, IMessageHandler<GhostBlockMe
     @Override
     public IMessage onMessage(GhostBlockMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof GhostBlockTileEntity)
         {
             ((GhostBlockTileEntity) tileEntity).setBlueprintAndID(MinechemBlueprint.blueprints.get(message.blueprintID), message.ghostblockID);

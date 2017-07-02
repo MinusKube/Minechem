@@ -28,7 +28,7 @@ public class LeadedChestTileEntityRenderer extends TileEntitySpecialRenderer
         }
         int facing = 0;
 
-        if (leadedChest.hasWorld())
+        if (leadedChest.hasWorldObj())
         {
             Block var10 = leadedChest.getBlockType();
             facing = leadedChest.getBlockMetadata();

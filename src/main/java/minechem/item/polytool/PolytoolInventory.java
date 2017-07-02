@@ -73,7 +73,7 @@ public class PolytoolInventory implements IInventory
             PolytoolUpgradeType upgrade = PolytoolHelper.getTypeFromElement(ElementItem.getElement(itemstack), 1);
             PolytoolItem.addTypeToNBT(player.inventory.getCurrentItem(), upgrade);
 
-            if (!player.world.isRemote)
+            if (!player.worldObj.isRemote)
             {
                 PolytoolUpdateMessage message = new PolytoolUpdateMessage(upgrade);
                 MessageHandler.INSTANCE.sendTo(message, (EntityPlayerMP)player);
@@ -96,7 +96,7 @@ public class PolytoolInventory implements IInventory
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
         return false;
     }
 

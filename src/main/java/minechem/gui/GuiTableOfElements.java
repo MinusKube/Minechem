@@ -47,7 +47,7 @@ public class GuiTableOfElements extends GuiContainerTabbed
         {
             if (y == GUI_HEIGHT - 411)
             {
-                mc.player.openGui(Minechem.INSTANCE, 2, mc.world, x, y, 0);
+                mc.thePlayer.openGui(Minechem.INSTANCE, 2, mc.theWorld, x, y, 0);
             }
 
         }

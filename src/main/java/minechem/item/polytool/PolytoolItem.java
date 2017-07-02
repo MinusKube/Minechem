@@ -234,7 +234,7 @@ public class PolytoolItem extends ItemPickaxe
     public Multimap getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
     {
         Multimap multimap = HashMultimap.create();
-        multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getSwordStr(stack), 0));
+        multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getSwordStr(stack), 0));
         return multimap;
     }
 

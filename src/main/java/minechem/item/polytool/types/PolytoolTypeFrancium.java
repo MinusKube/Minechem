@@ -12,7 +12,7 @@ public class PolytoolTypeFrancium extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        explode(target.world, target.posX, target.posY, target.posZ);
+        explode(target.worldObj, target.posX, target.posY, target.posZ);
     }
 
     @Override

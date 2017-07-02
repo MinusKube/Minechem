@@ -15,7 +15,7 @@ public class PolytoolTypeCaesium extends PolytoolUpgradeType
     {
         if (block == Blocks.STONE)
         {
-            target.world.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
+            target.worldObj.createExplosion(target, target.posX, target.posY, target.posZ, power, true);
         }
     }
 

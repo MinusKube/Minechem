@@ -8,7 +8,7 @@ package minechem.tileentity.blueprintprojector;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 
-public class BlueprintProjectorModel extends ModelBase
+public class    BlueprintProjectorModel extends ModelBase
 {
     // fields
     ModelRenderer base;

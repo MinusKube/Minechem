@@ -14,9 +14,9 @@ public class PolytoolTypeLead extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        if (!target.world.isRemote)
+        if (!target.worldObj.isRemote)
         {
-            List targets = target.world.getEntitiesWithinAABB(EntityLivingBase.class,
+            List targets = target.worldObj.getEntitiesWithinAABB(EntityLivingBase.class,
                     new AxisAlignedBB(target.posX - power * 3, target.posY - power * 3, target.posZ - power * 3, target.posX + power * 3, target.posY + power * 3, target.posZ + power * 3));
             Iterator iter = targets.iterator();
             while (iter.hasNext())

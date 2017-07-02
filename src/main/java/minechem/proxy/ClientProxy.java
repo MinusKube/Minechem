@@ -6,7 +6,6 @@ import minechem.fluid.MinechemFluid;
 import minechem.fluid.MinechemFluidBlock;
 import minechem.gui.GuiHandler;
 import minechem.item.bucket.MinechemBucketItem;
-//import minechem.render.FluidItemRenderingHandler;
 import minechem.sound.MinechemSoundEvent;
 import minechem.tileentity.blueprintprojector.BlueprintProjectorTileEntity;
 import minechem.tileentity.blueprintprojector.BlueprintProjectorTileEntityRenderer;
@@ -29,6 +28,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+//import minechem.render.FluidItemRenderingHandler;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
@@ -67,7 +68,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public World getClientWorld()
     {
-        return FMLClientHandler.instance().getClient().world;
+        return FMLClientHandler.instance().getClient().theWorld;
     }
 
     @Override
@@ -80,7 +81,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public EntityPlayer getPlayer(MessageContext context)
     {
-        return Minecraft.getMinecraft().player;
+        return Minecraft.getMinecraft().thePlayer;
     }
 
     @Override

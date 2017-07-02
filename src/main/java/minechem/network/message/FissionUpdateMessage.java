@@ -51,7 +51,7 @@ public class FissionUpdateMessage implements IMessage, IMessageHandler<FissionUp
     @Override
     public IMessage onMessage(FissionUpdateMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof FissionTileEntity)
         {
             ((FissionTileEntity) tileEntity).syncEnergyValue(message.energyStored);

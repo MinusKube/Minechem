@@ -19,7 +19,7 @@ public class PolytoolTypeZirconium extends PolytoolUpgradeType
         {
             if (rand.nextInt(8192) < 1 + power)
             {
-                world.spawnEntity(new EntityItem(world, x + rand.nextDouble(), y + rand.nextDouble(), z + rand.nextDouble(), new ItemStack(Items.DIAMOND, 1, 0)));
+                world.spawnEntityInWorld(new EntityItem(world, x + rand.nextDouble(), y + rand.nextDouble(), z + rand.nextDouble(), new ItemStack(Items.DIAMOND, 1, 0)));
             }
         }
     }

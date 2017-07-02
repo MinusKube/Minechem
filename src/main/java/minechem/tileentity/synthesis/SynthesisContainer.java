@@ -75,7 +75,7 @@ public class SynthesisContainer extends ContainerWithFakeSlots implements IRadia
     @Override
     public boolean canInteractWith(EntityPlayer var1)
     {
-        return synthesis.isUsableByPlayer(var1);
+        return synthesis.isUseableByPlayer(var1);
     }
 
     public void craftMaxmimum()

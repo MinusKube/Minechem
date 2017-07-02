@@ -39,9 +39,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'codechicken', name: 'NotEnoughItems', version: "${mcVersion}-${neiVersion}", ext: 'jar', classifier: "universal"
-    compile group: 'codechicken', name: 'CodeChickenCore', version: "${mcVersion}-${cccoreVersion}", ext: 'jar', classifier: "universal"
-    compile group: 'codechicken', name: 'CodeChickenLib', version: "${mcVersion}-${cclibVersion}", ext: 'jar', classifier: "universal"
+    //compile group: 'codechicken', name: 'NotEnoughItems', version: "${mcVersion}-${neiVersion}", ext: 'jar', classifier: "universal"
+    //compile group: 'codechicken', name: 'CodeChickenCore', version: "${mcVersion}-${cccoreVersion}", ext: 'jar', classifier: "universal"
+    //compile group: 'codechicken', name: 'CodeChickenLib', version: "${mcVersion}-${cclibVersion}", ext: 'jar', classifier: "universal"
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 

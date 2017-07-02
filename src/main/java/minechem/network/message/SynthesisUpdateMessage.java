@@ -51,7 +51,7 @@ public class SynthesisUpdateMessage implements IMessage, IMessageHandler<Synthes
     @Override
     public IMessage onMessage(SynthesisUpdateMessage message, MessageContext ctx)
     {
-        TileEntity tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
+        TileEntity tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         if (tileEntity instanceof SynthesisTileEntity)
         {
             ((SynthesisTileEntity) tileEntity).syncEnergyValue(message.energyStored);

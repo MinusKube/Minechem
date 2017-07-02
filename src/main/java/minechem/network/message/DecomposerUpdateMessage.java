@@ -28,6 +28,8 @@ public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements 
 
     public DecomposerUpdateMessage(DecomposerTileEntity tile)
     {
+        super(tile.getPos(), tile.getBlockMetadata(), tile.getUpdateTag());
+
         this.posX = tile.getPos().getX();
         this.posY = tile.getPos().getY();
         this.posZ = tile.getPos().getZ();
@@ -57,10 +59,13 @@ public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements 
         this.state = buf.readInt();
 
         byte[] data = new byte[buf.readableBytes()];
-        buf.readBytes(data);
 
-        this.fluidName = new String(data);
-        this.fluidAmount = buf.readInt();
+        if(data.length > 0) {
+            buf.readBytes(data);
+
+            this.fluidName = new String(data);
+            this.fluidAmount = buf.readInt();
+        }
     }
 
     @Override
@@ -73,8 +78,10 @@ public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements 
         buf.writeInt(this.energyStored);
         buf.writeInt(this.state);
 
-        buf.writeBytes(this.fluidName.getBytes());
-        buf.writeInt(this.fluidAmount);
+        if(this.fluidName != null) {
+            buf.writeBytes(this.fluidName.getBytes());
+            buf.writeInt(this.fluidAmount);
+        }
     }
 
     @Override
@@ -83,7 +90,7 @@ public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements 
         TileEntity tileEntity;
         if (ctx.side == Side.CLIENT)
         {
-            tileEntity = FMLClientHandler.instance().getClient().world.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
+            tileEntity = FMLClientHandler.instance().getClient().theWorld.getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
         } else
         {
             tileEntity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getTileEntity(new BlockPos(message.posX, message.posY, message.posZ));
@@ -102,4 +109,6 @@ public class DecomposerUpdateMessage extends SPacketUpdateTileEntity implements 
         return null;
 
     }
+
+
 }

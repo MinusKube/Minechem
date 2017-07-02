@@ -11,7 +11,7 @@ public class PolytoolTypeArgon extends PolytoolUpgradeType
     @Override
     public void hitEntity(ItemStack itemStack, EntityLivingBase target, EntityLivingBase player)
     {
-        if (!target.world.canSeeSky(target.getPosition()))
+        if (!target.worldObj.canSeeSky(target.getPosition()))
         {
             target.attackEntityFrom(DamageSource.inWall, power);
         }

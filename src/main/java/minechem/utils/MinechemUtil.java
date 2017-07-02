@@ -114,7 +114,7 @@ public final class MinechemUtil
             entityitem.motionX = (float) random.nextGaussian() * f3;
             entityitem.motionY = (float) random.nextGaussian() * f3 + 0.2F;
             entityitem.motionZ = (float) random.nextGaussian() * f3;
-            world.spawnEntity(entityitem);
+            world.spawnEntityInWorld(entityitem);
         }
     }
 
@@ -717,7 +717,7 @@ public final class MinechemUtil
     @SideOnly(Side.SERVER)
     public static WorldServer getDimension(int dimensionID)
     {
-        WorldServer[] worlds = FMLServerHandler.instance().getServer().worlds;
+        WorldServer[] worlds = FMLServerHandler.instance().getServer().worldServers;
         for (WorldServer world : worlds)
         {
             if (world.provider.getDimension() == dimensionID)

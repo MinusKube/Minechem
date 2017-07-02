@@ -44,7 +44,7 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
         DecomposerRecipe decomposerRecipe = DecomposerRecipeHandler.instance.getRecipe(itemstack);
         if (inventory[1] != null && (synthesisRecipe != null || decomposerRecipe != null))
         {
-            MinechemItemsRegistration.journal.addItemStackToJournal(itemstack, inventory[1], world);
+            MinechemItemsRegistration.journal.addItemStackToJournal(itemstack, inventory[1], worldObj);
         }
     }
 
@@ -85,11 +85,11 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
     public void setInventorySlotContents(int slot, ItemStack itemStack)
     {
         inventory[slot] = itemStack;
-        if (slot == 0 && itemStack != null && !world.isRemote)
+        if (slot == 0 && itemStack != null && !worldObj.isRemote)
         {
             onInspectItemStack(itemStack);
         }
-        if (slot == 1 && itemStack != null && inventory[0] != null && !world.isRemote)
+        if (slot == 1 && itemStack != null && inventory[0] != null && !worldObj.isRemote)
         {
             onInspectItemStack(inventory[0]);
         }
@@ -114,10 +114,10 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
     {
         double dist = entityPlayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-        return world.getTileEntity(pos) != this ? false : dist <= 64.0D;
+        return worldObj.getTileEntity(pos) != this ? false : dist <= 64.0D;
     }
 
     @Override
@@ -132,7 +132,7 @@ public class MicroscopeTileEntity extends MinechemTileEntity implements IInvento
 
     public int getFacing()
     {
-        return world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
+        return worldObj.getBlockState(pos).getBlock().getMetaFromState(worldObj.getBlockState(pos));
     }
 
     @Override

@@ -148,7 +148,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
                 return true;
             }
         }
-        itemstack.getItem().onCreated(itemstack, this.world, null);
+        itemstack.getItem().onCreated(itemstack, this.worldObj, null);
         for (int outputSlot : outputSlots)
         {
             ItemStack stackInSlot = getStackInSlot(outputSlot);
@@ -637,7 +637,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
+    public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
         return false;
     }
 
@@ -666,7 +666,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
         super.update();
 
         // Prevents any code below this line from running on clients.
-        if (world.isRemote)
+        if (worldObj.isRemote)
         {
             return;
         }
@@ -704,7 +704,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
             tankUpdate = false;
             // Notify minecraft that the inventory items in this machine have changed.
             DecomposerUpdateMessage message = new DecomposerUpdateMessage(this);
-            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(world.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
+            MessageHandler.INSTANCE.sendToAllAround(message, new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Settings.UpdateRadius));
         }
     }
 
@@ -743,7 +743,9 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         writeToNBT(new NBTTagCompound());
-        return (SPacketUpdateTileEntity) MessageHandler.INSTANCE.getPacketFrom(new DecomposerUpdateMessage(this));
+
+        return new DecomposerUpdateMessage(this);
+        //return (SPacketUpdateTileEntity) MessageHandler.INSTANCE.getPacketFrom(new DecomposerUpdateMessage(this));
     }
 
     public String getStateString()
@@ -754,7 +756,7 @@ public class DecomposerTileEntity extends MinechemTileEntityElectric implements 
     public void dumpFluid()
     {
         this.tank = null;
-        if (world.isRemote)
+        if (worldObj.isRemote)
         {
             MessageHandler.INSTANCE.sendToServer(new DecomposerDumpFluidMessage(this));
         }

@@ -36,7 +36,7 @@ public class MicroscopeBlock extends BlockSimpleContainer
     {
         super.onBlockPlacedBy(world, pos, state, el, is);
 
-        int facing = MathHelper.floor(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+        int facing = MathHelper.floor_double(el.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         world.setBlockState(pos, state.getBlock().getStateFromMeta(facing), 2);
     }
 

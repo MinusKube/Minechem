@@ -69,9 +69,9 @@ public class ChemicalFluidReactionHandler
 
         if (chemicalA != null && (world.isMaterialInBB(entityItem.getEntityBoundingBox(), Material.WATER) || world.isMaterialInBB(entityItem.getEntityBoundingBox(), MinechemFluidBlock.materialFluidBlock)))
         {
-            int x = MathHelper.floor(entityItem.posX);
-            int y = MathHelper.floor(entityItem.posY);
-            int z = MathHelper.floor(entityItem.posZ);
+            int x = MathHelper.floor_double(entityItem.posX);
+            int y = MathHelper.floor_double(entityItem.posY);
+            int z = MathHelper.floor_double(entityItem.posZ);
             Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
             MinechemChemicalType chemicalB = MinechemUtil.getChemical(block);
 

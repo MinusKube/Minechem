@@ -124,9 +124,9 @@ public class BoundedInventory implements IInventory
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player)
+    public boolean isUseableByPlayer(EntityPlayer player)
     {
-        return _inv.isUsableByPlayer(player);
+        return _inv.isUseableByPlayer(player);
     }
 
     @Override

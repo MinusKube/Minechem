@@ -23,7 +23,7 @@ public class PolytoolTypeMercury extends PolytoolUpgradeType
             Block found = world.getBlockState(new BlockPos(x, y - i, z)).getBlock();
             if (entityLiving instanceof EntityPlayer && found == Blocks.FLOWING_LAVA || found == Blocks.LAVA)
             {
-                entityLiving.sendMessage(new TextComponentString(EnumColour.RED + "WARNING: LAVA UNDERNEATH"));
+                entityLiving.addChatMessage(new TextComponentString(EnumColour.RED + "WARNING: LAVA UNDERNEATH"));
                 break;
             }
         }

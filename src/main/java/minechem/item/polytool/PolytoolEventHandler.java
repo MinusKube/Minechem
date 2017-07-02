@@ -26,7 +26,7 @@ public class PolytoolEventHandler
 
     public void addDrops(LivingDropsEvent event, ItemStack dropStack)
     {
-        EntityItem entityitem = new EntityItem(event.getEntityLiving().world, event.getEntityLiving().posX, event.getEntityLiving().posY, event.getEntityLiving().posZ, dropStack);
+        EntityItem entityitem = new EntityItem(event.getEntityLiving().worldObj, event.getEntityLiving().posX, event.getEntityLiving().posY, event.getEntityLiving().posZ, dropStack);
         entityitem.setPickupDelay(10);
         event.getDrops().add(entityitem);
     }
@@ -66,7 +66,7 @@ public class PolytoolEventHandler
                                     ArrayList<ItemStack> items = MinechemUtil.convertChemicalsIntoItemStacks(recipe.getOutput());
                                     for (ItemStack itemStack : items)
                                     {
-                                        trueResult.add(new EntityItem(entityItem.world, entityItem.posX, entityItem.posY, entityItem.posZ, itemStack));
+                                        trueResult.add(new EntityItem(entityItem.worldObj, entityItem.posX, entityItem.posY, entityItem.posZ, itemStack));
                                     }
                                 } else
                                 {
